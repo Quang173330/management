@@ -1,0 +1,31 @@
+# Public files
+/public/vendor/telescope
+/public/storage
+
+# Laravel passport keys
+/storage/*.key
+
+# Composer
+/vendor
+
+# PHPUnit artifacts
+/.phpunit.result.cache
+/coverage
+/coverage.xml
+/testdox.txt
+
+# Laravel IDE helper
+_ide_helper*
+
+# Env
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea
+.vscode
+vetur.config.js
+
+# Log files
+*.log

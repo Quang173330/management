@@ -1,0 +1,112 @@
+.master: &master
+  branches:
+  - master
+
+.develop: &develop
+  branches:
+  - develop
+
+.feature: &feature
+  branches:
+  - feature
+
+.pr: &pull-request
+  events:
+  - pull_request
+
+.skip-deploy: &skip-deploy
+  messages:
+  - '[ci skip deploy]'
+
+default:
+  workspace: shared
+
+checkout:
+  depth: 3
+
+stages:
+- Install
+- Test
+- Build
+- Deploy
+- Analysis
+
+jobs:
+- name: Yarn Install
+  stage: Install
+  image: node:14-alpine
+  before_script:
+  - yarn config set network-timeout 300000
+  script:
+  - yarn
+  cache:
+  - key:
+      files:
+      - web/yarn.lock
+    paths:
+    - web/node_modules
+
+- name: Composer Install
+  stage: Install
+  image: sunasteriskrnd/php-workspace:7.4
+  script:
+  - composer install -d api
+  cache:
+  - key:
+      files:
+      - api/composer.lock
+    paths:
+    - api/vendor
+
+- name: CommitLint
+  stage: Test
+  image: sunci/commitlint:latest
+  before_script:
+    - echo "module.exports = {extends:['@commitlint/config-conventional']}" > commitlint.config.js
+  script:
+    - export COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s")
+    - echo "$COMMIT_MESSAGE" | commitlint
+
+- name: ESLint
+  stage: Test
+  image: node:14-alpine
+  script:
+  - yarn lint --max-warnings 0
+
+- name: PHP CodeSniffer
+  stage: Test
+  image: sunasteriskrnd/php-workspace:7.4
+  script:
+  - composer sniff -d api
+
+- name: PHPUnit
+  stage: Test
+  image: sunasteriskrnd/php-workspace:7.4
+  services:
+  - redis:alpine
+  - image: postgres:12-alpine
+    environment:
+    - POSTGRES_DB=products_monitoring
+    - POSTGRES_USER=pm
+    - POSTGRES_PASSWORD=secret
+  environment:
+  - APP_ENV=testing
+  before_script:
+  - echo 'memory_limit=-1' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
+  script:
+  - docker-php-ext-disable xdebug
+  - cd api
+  - cp .env.example .env.testing
+  - php artisan key:generate
+  - php artisan migrate
+  - composer coverage
+  coverage:
+    type: clover
+    path: api/coverage.xml
+  test_result:
+    type: junit
+    path: api/coverage/junit.xml
+  artifacts:
+    paths:
+    - api/coverage
+    expires_in: 3 days

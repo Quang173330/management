@@ -1,0 +1,19 @@
+# Env
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea
+.vscode
+vetur.config.js
+.DS_Store
+
+# Log files
+*.log
+
+#private-key-githubapp
+*.key
+
+# GKC tool
+gkc_*

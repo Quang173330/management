@@ -1,0 +1,6 @@
+# Nuxt build files
+.nuxt
+dist
+
+# NPM
+node_modules

@@ -1,0 +1,9 @@
+* text=auto
+
+*.css linguist-vendored
+*.scss linguist-vendored
+
+*.vue text eol=lf
+*.js text eol=lf
+
+CHANGELOG.md export-ignore

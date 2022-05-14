@@ -1,0 +1,34 @@
+# Git
+*/**/.git
+*/**/.gitignore
+*/**/.gitattributes
+
+# Docker
+.dockerignore
+
+# Env files
+.env*
+
+# node_modules
+node_modules
+
+# Webpack compiled files
+.nuxt
+dist
+
+# Logs
+*/**/*.log
+
+# Tests
+tests
+jest.config.js
+
+# Linters
+.eslintrc
+.eslintignore
+
+# Editor configs
+jsconfig.json
+
+# Readme
+README.md

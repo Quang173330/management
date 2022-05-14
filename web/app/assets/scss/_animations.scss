@@ -1,0 +1,30 @@
+.spin {
+    animation: spin .5s infinite linear;
+}
+
+.animate {
+    &--very-fast {
+        animation-duration: .5s;
+    }
+
+    &--fast {
+        animation-duration: 1s;
+    }
+
+    &--slowly {
+        animation-duration: 5s;
+    }
+
+    &--very-slowly {
+        animation-duration: 10s;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

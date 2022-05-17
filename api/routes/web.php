@@ -14,3 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/web-init', 'WebInit');
+
+Route::namespace('Auth')->group(function () {
+    Route::prefix('login')->group(function () {
+        Route::get('{provider}', 'Login');
+        Route::get('{provider}/callback', 'LoginCallback');
+    });
+});

@@ -6,6 +6,18 @@
 
 <script>
     export default {
-        layout: 'blank',
+        inject: ['setBreadcrumb'],      
+                
+        computed: {
+            links() {
+                return [
+                    { icon: 'home', title: 'Dashboard', link: '/' },
+                ];
+            },
+        },
+
+        created() {
+            this.setBreadcrumb(this.links);
+        },
     };
 </script>

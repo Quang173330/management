@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Bindings\OrganizationBinding;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -26,6 +27,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->registerBindings();
+
         $this->configureRateLimiting();
     }
 
@@ -77,5 +80,10 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
         });
+    }
+
+    protected function registerBindings()
+    {
+        Route::bind('organization', OrganizationBinding::class);
     }
 }

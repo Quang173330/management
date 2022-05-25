@@ -21,3 +21,15 @@ Route::namespace('Auth')->group(function () {
         Route::get('{provider}/callback', 'LoginCallback');
     });
 });
+
+Route::group([
+    'prefix' => 'organizations',
+    'namespace' => 'Organizations',
+    'middleware' => 'auth',
+], function () {
+    Route::post('', 'Store');
+    Route::get('', 'Get');
+    Route::get('{organization}', 'Show');
+    Route::put('{organization}', 'Update');
+    Route::delete('{organization}', 'Delete');
+});

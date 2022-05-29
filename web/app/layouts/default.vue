@@ -5,8 +5,8 @@
         </ElAside>
 
         <ElContainer direction="vertical" class="w-100 h-100">
-            <ElHeader class="flex items-center justify-between bg-gray border-b border-gray-300">            
-                Projects
+            <ElHeader class="flex items-center justify-between bg-gray border-b border-gray-300">              
+                <ProjectMenu />
                 <UserMenu v-if="user" />
                 <nuxt-link v-else to="/login">
                     <ElButton type="primary">
@@ -35,12 +35,14 @@
     import { mapState } from 'vuex';
     import Sidebar from '~/components/layouts/UserSidebar.vue';
     import UserMenu from '~/components/layouts/UserMenu.vue';
+    import ProjectMenu from '~/components/layouts/ProjectMenu.vue';
     import BreadcrumbItem from '~/components/common/breadcrumb/BreadcrumbItem.vue';
 
     export default {
         components: {
             Sidebar,
             UserMenu,
+            ProjectMenu,
             BreadcrumbItem,
         },
 

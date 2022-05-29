@@ -9,7 +9,6 @@
                 </div>
             </SidebarItem>
         </template>
-        <SidebarItem :link="`/`" icon="menu" index="abc" />
         <SidebarItem :link="`/`" icon="home" index="home">
             Home
         </SidebarItem>

@@ -6,10 +6,10 @@ use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Organization extends Model
+class Project extends Model
 {
     use HasFactory, Sluggable;
-
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -17,19 +17,10 @@ class Organization extends Model
      */
     protected $fillable = [
         'user_id',
-        'organization_id',
         'name',
         'slug',
         'description',
     ];
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function owner()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 
     /**
      * Return the sluggable configuration array for project.

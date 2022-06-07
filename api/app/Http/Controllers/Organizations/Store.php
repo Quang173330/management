@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Organizations;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrganizationResource;
 use App\Models\Organization;
+use App\Models\OrganizationPermission;
 use Illuminate\Http\Request;
 
 class Store extends Controller
@@ -17,11 +18,21 @@ class Store extends Controller
      */
     public function __invoke(Request $request)
     {
-        $data = array_merge($request->only(['name', 'description']), [
-            'user_id' => $request->user()->id
+        $data = $request->only(['name', 'description']);
+        $user = $request->user();
+        $organization = $user->ownerOrganizations()->create($data);
+        $user->organizations()->attach($organization, [
+            'read' => true,
+            'write' => true,
+            'admin' => true,
         ]);
-        
-        $organization = Organization::create($data);
+
+        if (!$organization->permission) {
+            $organization->setRelation(
+                'permission',
+                new OrganizationPermission(['read' => true, 'write' => true, 'admin' => true])
+            );
+        }
 
         return OrganizationResource::make($organization);
     }

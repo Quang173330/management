@@ -12,7 +12,7 @@
         <SidebarItem :link="`/`" icon="home" index="home">
             Home
         </SidebarItem>
-        <SidebarItem :link="`/`" icon="add" index="issue">
+        <SidebarItem :link="`/projects/${slug}/add-issue`" icon="add" index="issue">
             Add Issue
         </SidebarItem>
         <SidebarItem :link="`/`" icon="list" index="issues">
@@ -46,8 +46,13 @@
 
         data() {
             return {
+                slug: 'project-manager',
                 defaultActiveSubmenu: [],
             };
+        },
+
+        computed: {
+            ...mapState('organization', ['organization']),
         },
     };
 </script>

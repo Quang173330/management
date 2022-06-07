@@ -29,7 +29,43 @@ Route::group([
 ], function () {
     Route::post('', 'Store');
     Route::get('', 'Get');
-    Route::get('{organization}', 'Show');
-    Route::put('{organization}', 'Update');
-    Route::delete('{organization}', 'Delete');
+    Route::group([
+        'middleware' => 'can:view,organization',
+    ], function () {
+        Route::get('/{organization}', 'Show');
+        Route::group([
+            'prefix' => '{organization}/projects',
+            'namespace' => 'Projects',
+        ], function () {
+            Route::get('', 'Get');
+            Route::get('{project}', 'Show');
+            Route::post('', 'Store');
+        });
+    });
+
+    Route::group([
+        'middleware' => 'can:edit,project',
+    ], function () {
+        Route::put('{organization}', 'Update');
+    });
+
+    Route::group([
+        'middleware' => 'can:manage,project',
+    ], function () {
+        Route::delete('{organization}', 'Delete');
+    });
+});
+
+Route::group([
+    'prefix' => 'projects',
+    'namespace' => 'Projects',
+    'middleware' => 'auth',
+], function () {
+    Route::group([
+        'prefix' => '{project}/issues',
+        'namespace' => 'Issues',
+        'middleware' => 'can:view,project',
+    ], function () {
+        Route::post('', 'Store');
+    });
 });

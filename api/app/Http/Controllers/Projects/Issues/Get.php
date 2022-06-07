@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Organizations;
+namespace App\Http\Controllers\Projects\Issues;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\OrganizationResource;
-use App\Models\Organization;
 use Illuminate\Http\Request;
 
 class Get extends Controller
@@ -17,8 +15,6 @@ class Get extends Controller
      */
     public function __invoke(Request $request)
     {
-        $organizations = $request->user()->organizations()->first();
-
-        return OrganizationResource::make($organizations);
+        //
     }
 }

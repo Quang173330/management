@@ -47,4 +47,46 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ownerOrganizations()
+    {
+        return $this->hasMany(Organization::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ownerProjects()
+    {
+        return $this->hasMany(Project::class);
+    }
+
+    /**
+     * The projects that belong to the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function organizations()
+    {
+        return $this->belongsToMany(Organization::class, 'organization_permissions')
+            ->as('permission')
+            ->withPivot('read', 'write', 'admin')
+            ->withTimestamps();
+    }
+
+    /**
+     * The projects that belong to the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_permissions')
+            ->as('permission')
+            ->withPivot('read', 'write', 'admin')
+            ->withTimestamps();
+    }
 }

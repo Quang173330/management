@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Organizations\Projects;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProjectResource;
 use App\Models\Organization;
+use App\Models\Project;
 use Illuminate\Http\Request;
 
-class Get extends Controller
+class Show extends Controller
 {
     /**
      * Handle the incoming request.
@@ -15,10 +16,8 @@ class Get extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Organization $organization, Request $request)
+    public function __invoke(Organization $organization, Project $project, Request $request)
     {
-        $user = $request->user();
-        $projects = $user->projects()->paginate();
-        return ProjectResource::collection($projects);
+        return ProjectResource::make($project);
     }
 }

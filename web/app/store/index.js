@@ -13,7 +13,7 @@ export const actions = {
             const {
                 data: {
                     data: {
-                        config, messages, extras, ...authUser
+                        config, messages, extras, organization, projects, ...authUser
                     },
                 },
             } = await axios.get('/web-init');
@@ -21,7 +21,9 @@ export const actions = {
             commit('setConfig', config);
             commit('setMessages', messages);
             commit('auth/setUser', authUser);
-
+            commit('organization/setOrganization', organization);
+            commit('projects/setProjects', projects);
+            commit('project/setProject', projects[0]);
             _forEach(extras, (payload, action) => dispatch(action, payload));
         } catch (error) {
             commit('setError', error);

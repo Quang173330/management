@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProjectPermissionsTable extends Migration
+class CreateMilestonesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,11 @@ class CreateProjectPermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('project_permissions', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id');
+        Schema::create('milestones', function (Blueprint $table) {
+            $table->id();
             $table->integer('project_id');
-            $table->boolean('admin');
-            $table->boolean('write');
-            $table->boolean('read');
+            $table->string('name');
             $table->timestamps();
-
-            $table->index(['user_id', 'project_id']);
         });
     }
 
@@ -33,6 +28,6 @@ class CreateProjectPermissionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_permissions');
+        Schema::dropIfExists('milestones');
     }
 }

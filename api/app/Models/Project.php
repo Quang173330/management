@@ -17,6 +17,7 @@ class Project extends Model
      */
     protected $fillable = [
         'user_id',
+        'organization_id',
         'name',
         'slug',
         'description',
@@ -34,5 +35,21 @@ class Project extends Model
                 'source' => 'name',
             ],
         ];
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'project_permissions')
+            ->as('permission')
+            ->withPivot('read', 'write', 'admin')
+            ->withTimestamps();
+    }
+
+    public function issues()
+    {
+        return $this->hasMany(Issue::class);
     }
 }

@@ -18,4 +18,12 @@ class Milestone extends Model
         'project_id',
         'name',
     ];
+
+    public function issues() {
+        return $this->belongsToMany(Issue::class);
+    }
+
+    public function project() {
+        return $this->belongsTo(Project::class);
+    }
 }

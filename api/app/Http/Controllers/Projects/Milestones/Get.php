@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Projects\Issues;
+namespace App\Http\Controllers\Projects\Milestones;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\IssueResource;
+use App\Http\Resources\MilestoneResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
@@ -17,8 +17,8 @@ class Get extends Controller
      */
     public function __invoke(Project $project, Request $request)
     {
-        $issues = $project->issues;
-        $issues->load(['assign', 'milestones', 'category']);
-        return IssueResource::collection($issues);
+        $milestones = $project->milestones;
+
+        return MilestoneResource::collection($milestones);
     }
 }

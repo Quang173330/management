@@ -77,158 +77,110 @@
                 @clear="filter('search')"
             />
         </div>
-        <el-table class="mt-5" :data="tableData" style="width: 100%">
-            <el-table-column prop="date" label="Issue Type" width="150" />
-            <el-table-column prop="name" label="Title" width="120" />
-            <el-table-column prop="name" label="Assign" width="120" />
-            <el-table-column prop="name" label="Status" width="120" />
-            <el-table-column prop="name" label="Priority" width="120" />
-            <el-table-column prop="name" label="Created" width="120" />
-            <el-table-column prop="name" label="Start Date" width="120" />
-            <el-table-column prop="name" label="Due Date" width="120" />
-            <el-table-column prop="state" label="Estimate Hours" width="120"/>
-            <el-table-column prop="city" label="Actual Hours" width="120"/>
-            <el-table-column prop="address" label="Updated" width="300"/>
-            <el-table-column prop="zip" label="Registered By" width="120"/>
-            <el-table-column prop="zip" label="Story Points" width="120"/>
-            <el-table-column fixed="right" label="Actions" width="120">
-            <template slot-scope="scope">
+        <ElTable height="500" class="mt-5" :data="issues" style="width: 100%">
+            <ElTableColumn label="Issue Type" width="150" >
+                <template slot-scope="{ row }">
+                    <span class="font-medium break-normal">{{ row.type }}</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn label="Title" width="120" >
+                <template slot-scope="{ row }">
+                    <span class="font-medium break-normal">{{ row.title }}</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn label="Assign" width="120" >
+                <template slot-scope="{ row }">
+                    <span v-if="row.assign !== null" class="font-medium break-normal">{{ row.assign.name }}</span>
+                    <span v-else>null</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn label="Milestone" width="120" >
+                <template slot-scope="{ row }">
+                    <span  v-if="row.milestones.length" class="font-medium break-normal">{{ row.milestones[0].name }}</span>
+                    <span v-else>null</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn label="Status" width="120" >
+                <template slot-scope="{ row }">
+                    <span class="font-medium break-normal">{{ row.status }}</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn label="Category" width="120" >
+                <template slot-scope="{ row }">
+                    <span v-if="row.category !== null" class="font-medium break-normal">{{ row.category.name }}</span>
+                    <span v-else>null</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn label="Priority" width="120" >
+                <template slot-scope="{ row }">
+                    <span class="font-medium break-normal">{{ row.priority }}</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn prop="created_at" label="Created" width="120" >
+                <template slot-scope="{ row }">
+                    <span class="font-medium break-normal">{{ row.created_at | humanizeTime }}</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn label="Start Date" width="120" >
+                <template slot-scope="{ row }">
+                    <span class="font-medium break-normal">{{ row.start_date | humanizeTime }}</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn prop="due_date" label="Due Date" width="120" >
+                <template slot-scope="{ row }">
+                    <span class="font-medium break-normal">{{ row.due_date | humanizeTime }}</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn prop="estimated_hours" label="Estimate Hours" width="120">
+                <template slot-scope="{ row }">
+                    <span class="font-medium break-normal">{{ row.estimated_hours }}</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn prop="actual_hours" label="Actual Hours" width="120">
+                <template slot-scope="{ row }">
+                    <span class="font-medium break-normal">{{ row.actual_hours }}</span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn prop="description" label="Description" width="120">
+                <template slot-scope="{ row }">
+                    <span class="font-medium break-normal">{{ row.description }}</span>
+                </template>
+            </ElTableColumn
+            <ElTableColumn fixed="right" label="Actions" width="120">
                 <el-button
-                @click.native.prevent="deleteRow(scope.$index, tableData)"
                 type="text"
                 >
                     Edit <i class="el-icon-edit"/>
                 </el-button>
-            </template>
-            </el-table-column>
-        </el-table>
+            </ElTableColumn>
+        </ElTable>
     </div>
 </template>
 
 <script>
-export default {
-  methods: {
-    deleteRow(index, rows) {
-      rows.splice(index, 1);
-    },
-  },
-  data() {
-    return {
-      tableData: [
-        {
-          date: "2016-05-03",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
+    import { get } from '~/api/issues.js';
+    import { mapState } from 'vuex';
+    export default {
+        middleware: ['auth'],
+        inject: ['setBreadcrumb'],      
+        computed: {
+            ...mapState('project', ['project']),
+            links() {
+                return [
+                    { icon: 'home', title: this.project.name, link: '/' },
+                ];
+            },
         },
-        {
-          date: "2016-05-02",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
+        created() {
+                this.setBreadcrumb(this.links);
         },
-        {
-          date: "2016-05-04",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
+        async asyncData({params}) {
+            const { slug } = params;
+            const {data: { data: issues } } = await get(slug);
+            console.log(issues);
+            return {
+                issues
+            };
         },
-        {
-          date: "2016-05-01",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-        {
-          date: "2016-05-08",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-        {
-          date: "2016-05-06",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-        {
-          date: "2016-05-07",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-               {
-          date: "2016-05-03",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-        {
-          date: "2016-05-02",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-        {
-          date: "2016-05-04",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-        {
-          date: "2016-05-01",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-        {
-          date: "2016-05-08",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-        {
-          date: "2016-05-06",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-        {
-          date: "2016-05-07",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-      ],
     };
-  },
-};
 </script>

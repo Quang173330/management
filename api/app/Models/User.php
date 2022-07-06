@@ -89,4 +89,9 @@ class User extends Authenticatable
             ->withPivot('read', 'write', 'admin')
             ->withTimestamps();
     }
+
+    public function issues()
+    {
+        return $this->hasMany(Issue::class, 'assign_id');
+    }
 }

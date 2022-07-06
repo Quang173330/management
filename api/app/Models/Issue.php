@@ -18,6 +18,8 @@ class Issue extends Model
         'user_id',
         'project_id',
         'parent_id',
+        'assign_id',
+        'category_id',
         'title',
         'type',
         'priority',
@@ -28,4 +30,18 @@ class Issue extends Model
         'start_date',
         'due_date',
     ];
+
+    public function milestones() {
+        return $this->belongsToMany(Milestone::class, 'issue_milestones')->withTimestamps();
+    }
+
+    public function assign()
+    {
+        return $this->belongsTo(User::class, 'assign_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

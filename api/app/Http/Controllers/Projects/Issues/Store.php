@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects\Issues;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\IssueResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
@@ -25,6 +26,8 @@ class Store extends Controller
             'actual_hours',
             'description',
             'status',
+            'assign_id',
+            'category_id',
             'start_date',
             'due_date',
         ]);
@@ -32,7 +35,9 @@ class Store extends Controller
         $data['user_id'] = $request->user()->id;
 
         $issue = $project->issues()->create($data);
+        $milestoneId = $request->input('milestone');
+        $issue->milestones()->attach($milestoneId);
 
-        return $issue;
+        return IssueResource::make($issue);
     }
 }

@@ -66,6 +66,34 @@ Route::group([
         'namespace' => 'Issues',
         'middleware' => 'can:view,project',
     ], function () {
+        Route::get('', 'Get');
         Route::post('', 'Store');
+    });
+
+    Route::group([
+        'prefix' => '{project}/milestones',
+        'namespace' => 'Milestones',
+        'middleware' => 'can:view,project',
+    ], function () {
+        Route::post('', 'Store');
+        Route::get('', 'Get');
+    });
+
+    Route::group([
+        'prefix' => '{project}/users',
+        'namespace' => 'Users',
+        'middleware' => 'can:view,project',
+    ], function () {
+        // Route::post('', 'Store');
+        Route::get('', 'Get');
+    });
+
+    Route::group([
+        'prefix' => '{project}/categories',
+        'namespace' => 'Categories',
+        'middleware' => 'can:view,project',
+    ], function () {
+        Route::post('', 'Store');
+        Route::get('', 'Get');
     });
 });

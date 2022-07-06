@@ -12,10 +12,10 @@
         <SidebarItem :link="`/`" icon="home" index="home">
             Home
         </SidebarItem>
-        <SidebarItem :link="`/projects/${slug}/add-issue`" icon="add" index="issue">
+        <SidebarItem :link="`/projects/${project.slug}/add-issue`" icon="add" index="issue">
             Add Issue
         </SidebarItem>
-        <SidebarItem :link="`/`" icon="list" index="issues">
+        <SidebarItem :link="`/projects/${project.slug}/issues`" icon="list" index="issues">
             Issues
         </SidebarItem>
         <SidebarItem :link="`/`" icon="stats-chart" index="board">
@@ -53,6 +53,7 @@
 
         computed: {
             ...mapState('organization', ['organization']),
+            ...mapState('project', ['project']),
         },
     };
 </script>

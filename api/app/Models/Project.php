@@ -52,4 +52,12 @@ class Project extends Model
     {
         return $this->hasMany(Issue::class);
     }
+
+    public function milestones() {
+        return $this->hasMany(Milestone::class);
+    }
+
+    public function categories() {
+        return $this->hasMany(Category::class);
+    }
 }

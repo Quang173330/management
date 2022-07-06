@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Http\Bindings\OrganizationBinding;
+use App\Http\Bindings\ProjectBinding;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -85,5 +86,6 @@ class RouteServiceProvider extends ServiceProvider
     protected function registerBindings()
     {
         Route::bind('organization', OrganizationBinding::class);
+        Route::bind('project', ProjectBinding::class);
     }
 }

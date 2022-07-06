@@ -5,7 +5,6 @@ namespace App\Models;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Organization extends Model
 {
@@ -18,6 +17,7 @@ class Organization extends Model
      */
     protected $fillable = [
         'user_id',
+        'organization_id',
         'name',
         'slug',
         'description',
@@ -43,5 +43,12 @@ class Organization extends Model
                 'source' => 'name',
             ],
         ];
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'organization_permissions')
+            ->withPivot('read', 'write', 'admin')
+            ->withTimestamps();
     }
 }

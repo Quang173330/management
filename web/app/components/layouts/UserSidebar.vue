@@ -9,14 +9,13 @@
                 </div>
             </SidebarItem>
         </template>
-        <SidebarItem :link="`/`" icon="menu" index="abc" />
         <SidebarItem :link="`/`" icon="home" index="home">
             Home
         </SidebarItem>
-        <SidebarItem :link="`/`" icon="add" index="issue">
+        <SidebarItem :link="`/projects/${project.slug}/add-issue`" icon="add" index="issue">
             Add Issue
         </SidebarItem>
-        <SidebarItem :link="`/`" icon="list" index="issues">
+        <SidebarItem :link="`/projects/${project.slug}/issues`" icon="list" index="issues">
             Issues
         </SidebarItem>
         <SidebarItem :link="`/`" icon="stats-chart" index="board">
@@ -47,8 +46,14 @@
 
         data() {
             return {
+                slug: 'project-manager',
                 defaultActiveSubmenu: [],
             };
+        },
+
+        computed: {
+            ...mapState('organization', ['organization']),
+            ...mapState('project', ['project']),
         },
     };
 </script>

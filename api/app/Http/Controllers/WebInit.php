@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OrganizationResource;
+use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
+use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -38,6 +41,8 @@ class WebInit extends Controller
 
         return new MergeValue([
             'user' => UserResource::make($user),
+            'organization' => OrganizationResource::make($user->organizations()->first()),
+            'projects' => ProjectResource::collection($user->projects),
         ]);
     }
 }

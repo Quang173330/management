@@ -1,17 +1,21 @@
 <template>
     <div>
-        Hello Worldd
+        {{ project.name }}
     </div>
 </template>
 
 <script>
+    import { mapState } from 'vuex';
+    import { getOrganizations } from '~/api/organizations';
     export default {
-        inject: ['setBreadcrumb'],      
-                
+        middleware: ['auth'],
+        inject: ['setBreadcrumb'],
+
         computed: {
+            ...mapState('project', ['project']),
             links() {
                 return [
-                    { icon: 'home', title: 'Dashboard', link: '/' },
+                    { icon: 'home', title: this.project.name, link: '/' },
                 ];
             },
         },

@@ -30,6 +30,8 @@ import RadioButton from 'element-ui/lib/radio-button';
 import RadioGroup from 'element-ui/lib/radio-group';
 import Autocomplete from 'element-ui/lib/autocomplete';
 import DatePicker from 'element-ui/lib/date-picker';
+import TimePicker from 'element-ui/lib/time-picker';
+
 
 import Dialog from 'element-ui/lib/dialog';
 import Popconfirm from 'element-ui/lib/popconfirm';
@@ -93,6 +95,7 @@ export default () => {
     Vue.component('ElRadioGroup', RadioGroup);
     Vue.component('ElAutocomplete', Autocomplete);
     Vue.component('ElDatePicker', DatePicker);
+    Vue.component('ElTimePicker', TimePicker);
 
     Vue.component('ElTooltip', Tooltip);
     Vue.component('ElDialog', Dialog);

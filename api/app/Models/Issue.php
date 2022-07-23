@@ -40,6 +40,11 @@ class Issue extends Model
         return $this->belongsTo(User::class, 'assign_id');
     }
 
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'assign_id');
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);

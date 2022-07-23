@@ -18,7 +18,7 @@
         <SidebarItem :link="`/projects/${project.slug}/issues`" icon="list" index="issues">
             Issues
         </SidebarItem>
-        <SidebarItem :link="`/`" icon="stats-chart" index="board">
+        <SidebarItem :link="`/projects/${project.slug}/issues/board`" icon="stats-chart" index="board">
             Board
         </SidebarItem>
         <SidebarItem :link="`/`" icon="document" index="wiki">
@@ -37,11 +37,13 @@
     import { mapState } from 'vuex';
     import Sidebar from '~/components/common/sidebar/Sidebar.vue';
     import SidebarItem from '~/components/common/sidebar/Item.vue';
+    import draggable from 'vuedraggable';
 
     export default {
         components: {
             Sidebar,
             SidebarItem,
+            draggable
         },
 
         data() {

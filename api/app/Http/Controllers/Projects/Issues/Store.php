@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects\Issues;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Issue\CreateIssueRequest;
 use App\Http\Resources\IssueResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class Store extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Project $project, Request $request)
+    public function __invoke(Project $project, CreateIssueRequest $request)
     {
         $data = $request->only([
             'parent_id',

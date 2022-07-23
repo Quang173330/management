@@ -6,7 +6,7 @@ import { parseDateString } from '~/utils/date';
  * @param {string} format
  * @param {string|null} fromFormat
  */
-export default (date, toFormat = 'MMMM do yyyy HH:mm', fromFormat = null) => {
+export default (date, toFormat = 'MMMM do yyyy', fromFormat = null) => {
     const then = typeof date === 'string' ? parseDateString(date, fromFormat) : date;
 
     return format(then, toFormat);

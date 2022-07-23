@@ -68,6 +68,7 @@ Route::group([
     ], function () {
         Route::get('', 'Get');
         Route::post('', 'Store');
+        Route::put('{issue}', 'Update');
     });
 
     Route::group([

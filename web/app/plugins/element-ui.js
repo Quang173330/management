@@ -67,6 +67,9 @@ import Progress from 'element-ui/lib/progress';
 import Tabs from 'element-ui/lib/tabs';
 import TabPane from 'element-ui/lib/tab-pane';
 import Loading from 'element-ui/lib/loading';
+import Element from 'element-ui';
+Vue.use(Element);
+// import InfiniteScroll from 'element-ui/lib/infinite-scroll';
 
 export default () => {
     Vue.component('ElContainer', Container);

@@ -20,7 +20,7 @@ class CreateIssuesTable extends Migration
             $table->integer('parent_id')->nullable();
             $table->string('title');
             $table->string('type');
-            $table->integer('priority');
+            $table->string('priority');
             $table->integer('estimated_hours');
             $table->integer('actual_hours');
             $table->text('description');

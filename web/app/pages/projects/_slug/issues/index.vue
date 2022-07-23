@@ -1,86 +1,16 @@
 <template>
     <div class="m-5">
-        <div class="align-center">
-            <ElSelect
-                v-model="is_active"
-                size="medium"
-                placeholder="Filter by active"
-                clearable
-                filterable
-                @change="filter('is_active')"
-            >
-                <ElOption value="true" label="true" />
-                <ElOption value="false" label="false" />
-            </ElSelect>
-
-            <ElSelect
-                v-model="is_active"
-                size="medium"
-                placeholder="Filter by active"
-                clearable
-                filterable
-                @change="filter('is_active')"
-            >
-                <ElOption value="true" label="true" />
-                <ElOption value="false" label="false" />
-            </ElSelect>
-
-            <ElSelect
-                v-model="style"
-                size="medium"
-                placeholder="Filter by style"
-                clearable
-                filterable
-                @change="filter('style')"
-            >
-                <ElOption value="primary" label="primary" />
-                <ElOption value="info" label="info" />
-                <ElOption value="warning" label="warning" />
-                <ElOption value="danger" label="danger" />
-            </ElSelect>
-
-            <ElSelect
-                v-model="style"
-                size="medium"
-                placeholder="Filter by style"
-                clearable
-                filterable
-                @change="filter('style')"
-            >
-                <ElOption value="primary" label="primary" />
-                <ElOption value="info" label="info" />
-                <ElOption value="warning" label="warning" />
-                <ElOption value="danger" label="danger" />
-            </ElSelect>
-
-            <ElDatePicker
-                v-model="timeRange"
-                class="mr-3"
-                type="daterange"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                range-separator="-"
-                start-placeholder="Start date"
-                end-placeholder="End date"
-                :picker-options="pickerOptions"
-                size="medium"
-            />
-
-            <ElInput
-                v-model="search"
-                class="max-w-sm"
-                size="medium"
-                placeholder="Filter by title"
-                suffix-icon="el-icon-search"
-                clearable
-                @keyup.native.enter="filter('search')"
-                @clear="filter('search')"
-            />
-        </div>
-        <ElTable height="500" class="mt-5" :data="issues" style="width: 100%">
-            <ElTableColumn label="Issue Type" width="150" >
+        <IssueFilter />
+        <Pagination :data="pagination" />
+        <ElTable class="mt-5" :data="issues" style="width: 100%">
+            <ElTableColumn label="Issue Type" width="150">
                 <template slot-scope="{ row }">
-                    <span class="font-medium break-normal">{{ row.type }}</span>
+                    <span
+                        class=" capitalize text-center w-28 font-medium inline-block py-1 rounded-3xl text-white text-sm"
+                        :class="typeClass(row.type)"
+                    >
+                        {{ row.type }}
+                    </span>
                 </template>
             </ElTableColumn>
             <ElTableColumn label="Title" width="120" >
@@ -88,21 +18,40 @@
                     <span class="font-medium break-normal">{{ row.title }}</span>
                 </template>
             </ElTableColumn>
-            <ElTableColumn label="Assign" width="120" >
+            <ElTableColumn label="Assign" width="200" >
                 <template slot-scope="{ row }">
-                    <span v-if="row.assign !== null" class="font-medium break-normal">{{ row.assign.name }}</span>
-                    <span v-else>null</span>
+                    <div v-if="row.assign !== null" class="flex  break-normal">
+                        <ElAvatar size="small" :src="row.assign.avatar_url"/>
+                        <span class="truncate ml-1 flex content-center mt-1 font-medium">{{ row.assign.name }}</span>
+                    </div>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn label="Status" width="150" >
+                <template slot-scope="{ row }">
+                    <span
+                        class="capitalize text-center w-28 font-medium inline-block py-1 rounded-3xl text-white text-sm"
+                        :class="statusClass(row.status)"
+                    >
+                        {{ row.status }}
+                    </span>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn label="Priority" width="150" >
+                <template slot-scope="{ row }">
+                    <strong class="capitalize" :class="priorityClass(row.priority)">{{ row.priority }}</strong>              
                 </template>
             </ElTableColumn>
             <ElTableColumn label="Milestone" width="120" >
                 <template slot-scope="{ row }">
-                    <span  v-if="row.milestones.length" class="font-medium break-normal">{{ row.milestones[0].name }}</span>
-                    <span v-else>null</span>
+                    <span v-for="milestone in row.milestones">{{ milestone.name }}<br></span>
                 </template>
             </ElTableColumn>
-            <ElTableColumn label="Status" width="120" >
+            <ElTableColumn label="Created by" width="200" >
                 <template slot-scope="{ row }">
-                    <span class="font-medium break-normal">{{ row.status }}</span>
+                    <div v-if="row.owner !== null" class="flex  break-normal">
+                        <ElAvatar size="small" :src="row.owner.avatar_url"/>
+                        <span class="truncate ml-1 flex content-center mt-1 font-medium">{{ row.owner.name }}</span>
+                    </div>
                 </template>
             </ElTableColumn>
             <ElTableColumn label="Category" width="120" >
@@ -111,24 +60,20 @@
                     <span v-else>null</span>
                 </template>
             </ElTableColumn>
-            <ElTableColumn label="Priority" width="120" >
-                <template slot-scope="{ row }">
-                    <span class="font-medium break-normal">{{ row.priority }}</span>
-                </template>
-            </ElTableColumn>
+
             <ElTableColumn prop="created_at" label="Created" width="120" >
                 <template slot-scope="{ row }">
-                    <span class="font-medium break-normal">{{ row.created_at | humanizeTime }}</span>
+                    <span class="font-medium break-normal">{{ row.created_at | formatDate }}</span>
                 </template>
             </ElTableColumn>
             <ElTableColumn label="Start Date" width="120" >
                 <template slot-scope="{ row }">
-                    <span class="font-medium break-normal">{{ row.start_date | humanizeTime }}</span>
+                    <span class="font-medium break-normal">{{ row.start_date | formatDate }}</span>
                 </template>
             </ElTableColumn>
             <ElTableColumn prop="due_date" label="Due Date" width="120" >
                 <template slot-scope="{ row }">
-                    <span class="font-medium break-normal">{{ row.due_date | humanizeTime }}</span>
+                    <span class="font-medium break-normal">{{ row.due_date | formatDate }}</span>
                 </template>
             </ElTableColumn>
             <ElTableColumn prop="estimated_hours" label="Estimate Hours" width="120">
@@ -154,13 +99,21 @@
                 </el-button>
             </ElTableColumn>
         </ElTable>
+        <Pagination :data="pagination" />
     </div>
 </template>
 
 <script>
     import { get } from '~/api/issues.js';
     import { mapState } from 'vuex';
+    import IssueFilter from '~/components/projects/issues/IssueFilter.vue';
+    import Pagination from '~/components/common/Pagination.vue';
+    
     export default {
+        components: {
+            IssueFilter,
+            Pagination,
+        },
         middleware: ['auth'],
         inject: ['setBreadcrumb'],      
         computed: {
@@ -174,13 +127,45 @@
         created() {
                 this.setBreadcrumb(this.links);
         },
-        async asyncData({params}) {
+        async asyncData({ params, query }) {
             const { slug } = params;
-            const {data: { data: issues } } = await get(slug);
-            console.log(issues);
+            const {data: { data, meta } } = await get(slug, {...query});
             return {
-                issues
+                issues: data,
+                pagination: meta,
             };
         },
+        watchQuery: true,
+
+        methods: {
+            typeClass(type) {
+                switch (type) {
+                    case 'task':
+                        return 'bg-yellow-600';
+                    case 'feature':
+                        return 'bg-blue-600';
+                    case 'bug':
+                        return 'bg-red-500';
+                }
+            },
+            statusClass(type) {
+                switch (type) {
+                    case 'in progress':
+                        return 'bg-blue-500';
+                    case 'resolved':
+                        return 'bg-green-500';
+                    case 'open':
+                        return 'bg-red-400';
+                }
+            },
+            priorityClass(type) {
+                switch (type) {
+                    case 'high':
+                        return 'text-red-500';
+                    case 'normal':
+                        return 'text-blue-500';
+                }
+            },
+        }
     };
 </script>

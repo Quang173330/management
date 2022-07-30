@@ -152,7 +152,7 @@
                     const status = data.status;
                     try {
                         data.status = 'open';
-                        const {data: { data: issue } } = await update(this.slug, data)
+                        const {data: { data: issue } } = await update(this.slug,data.id, data)
                         this.$message.success('Update status success');
                     } catch(error) {
                         this.$message.error('Error, Something went wrong!')
@@ -175,7 +175,7 @@
                     const status = data.status;
                     try {
                         data.status = 'in progress';
-                        const {data: { data: issue } } = await update(this.slug, data)
+                        const {data: { data: issue } } = await update(this.slug,data.id, data)
                         this.$message.success('Update status success');
                     } catch(error) {
                         this.$message.error('Error, Something went wrong!')
@@ -198,7 +198,7 @@
                     const status = data.status;
                     try {
                         data.status = 'resolved';
-                        const {data: { data: issue } } = await update(this.slug, data)
+                        const {data: { data: issue } } = await update(this.slug,data.id, data)
                         this.$message.success('Update status success');
                     } catch(error) {
                         this.$message.error('Error, Something went wrong!')
@@ -227,7 +227,7 @@
                     const status = data.status;
                     try {
                         data.status = 'closed';
-                        const {data: { data: issue } } = await update(this.slug, data)
+                        const {data: { data: issue } } = await update(this.slug,data.id, data)
                         this.$message.success('Update status success');
                     } catch(error) {
                         data.status = status;

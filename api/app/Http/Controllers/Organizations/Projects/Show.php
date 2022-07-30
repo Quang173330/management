@@ -18,6 +18,11 @@ class Show extends Controller
      */
     public function __invoke(Organization $organization, Project $project, Request $request)
     {
+        $permission = $project->permissions()->where('user_id', $request->user()->id)->first();
+
+        $project->setRelation('permission', $permission);
+
+        $project->load(['owner']);
         return ProjectResource::make($project);
     }
 }

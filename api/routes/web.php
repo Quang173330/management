@@ -67,6 +67,7 @@ Route::group([
         'middleware' => 'can:view,project',
     ], function () {
         Route::get('', 'Get');
+        Route::get('{issue}', 'Show');
         Route::post('', 'Store');
         Route::put('{issue}', 'Update');
     });
@@ -96,5 +97,19 @@ Route::group([
     ], function () {
         Route::post('', 'Store');
         Route::get('', 'Get');
+    });
+
+    Route::group([
+        'prefix' => '{project}',
+        'middleware' => 'can:manage,project',
+    ], function () {
+        Route::group([
+            'prefix' => 'users',
+            'namespace' => 'Users',
+        ], function () {
+            Route::post('', 'Store');
+            Route::delete('{projectPermission}', 'Delete');
+            Route::put('{projectPermission}', 'Update');
+        });
     });
 });

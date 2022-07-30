@@ -9,7 +9,7 @@
                 </div>
             </SidebarItem>
         </template>
-        <SidebarItem :link="`/`" icon="home" index="home">
+        <SidebarItem :link="`/projects/${project.slug}`" icon="home" index="home">
             Home
         </SidebarItem>
         <SidebarItem :link="`/projects/${project.slug}/add-issue`" icon="add" index="issue">
@@ -27,7 +27,7 @@
         <SidebarItem :link="`/`" icon="file-tray" index="files">
             Files
         </SidebarItem>
-        <SidebarItem :link="`/`" icon="settings" index="setting">
+        <SidebarItem :link="`/projects/${project.slug}/settings`" icon="settings" index="setting">
             Project Settings
         </SidebarItem>
     </Sidebar>

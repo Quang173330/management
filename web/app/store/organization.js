@@ -8,7 +8,6 @@ export const actions = {
 
     async get({ commit }) {
         const { data: { data } } = await getOrganizations();
-        console.log(data);
         commit('setOrganization', data);
     },
 };

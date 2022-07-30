@@ -34,6 +34,8 @@ class Update extends Controller
         ]);
 
         $issue->update($data);
+        $milestoneId = $request->input('milestone');
+        $issue->milestones()->attach($milestoneId);
 
         return IssueResource::make($issue);
     }

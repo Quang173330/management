@@ -48,6 +48,22 @@ class Project extends Model
             ->withTimestamps();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function permissions()
+    {
+        return $this->hasMany(ProjectPermission::class);
+    }
+
     public function issues()
     {
         return $this->hasMany(Issue::class);

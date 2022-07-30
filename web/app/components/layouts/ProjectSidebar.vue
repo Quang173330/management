@@ -1,8 +1,9 @@
 <template>
     <Sidebar class="layout__sub-sidebar">
         <template #header>
-            <div slot="icon" class="p-4 pl-6 font-medium flex">
-                Settings
+            <div slot="icon" class="items-center flex p-4 pl-6 font-medium flex">
+                <Ionicon class="mr-2" name="settings" />
+                Project Settings
             </div>
         </template>
 
@@ -28,20 +29,13 @@
         },
 
         computed: {
-            ...mapState('projects', ['projects']),
-
-            currentProject() {
-                const { slug } = this.$route.params;
-
-                return _find(this.projects, { slug });
-            },
-
+            ...mapState('project', ['project']),
             isAdmin() {
-                return this.currentProject ? this.currentProject.permission?.admin : null;
+                return this.project ? this.project.permission?.admin : null;
             },
 
             slug() {
-                return this.currentProject ? this.currentProject.slug : null;
+                return this.project ? this.project.slug : null;
             },
         },
     };

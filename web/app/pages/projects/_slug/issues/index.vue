@@ -13,9 +13,13 @@
                     </span>
                 </template>
             </ElTableColumn>
-            <ElTableColumn label="Title" width="120" >
+            <ElTableColumn label="Title" width="240" >
                 <template slot-scope="{ row }">
-                    <span class="font-medium break-normal">{{ row.title }}</span>
+                    <nuxt-link
+                        :to="`/projects/${project.slug}/issues/${row.id}`"
+                    >
+                        <span class="font-medium truncate">{{ row.title }}</span>
+                    </nuxt-link>
                 </template>
             </ElTableColumn>
             <ElTableColumn label="Assign" width="200" >
@@ -41,7 +45,7 @@
                     <strong class="capitalize" :class="priorityClass(row.priority)">{{ row.priority }}</strong>              
                 </template>
             </ElTableColumn>
-            <ElTableColumn label="Milestone" width="120" >
+            <ElTableColumn label="Milestone" width="150" >
                 <template slot-scope="{ row }">
                     <span v-for="milestone in row.milestones">{{ milestone.name }}<br></span>
                 </template>
@@ -54,49 +58,53 @@
                     </div>
                 </template>
             </ElTableColumn>
-            <ElTableColumn label="Category" width="120" >
+            <ElTableColumn label="Category" width="150" >
                 <template slot-scope="{ row }">
                     <span v-if="row.category !== null" class="font-medium break-normal">{{ row.category.name }}</span>
                     <span v-else>null</span>
                 </template>
             </ElTableColumn>
 
-            <ElTableColumn prop="created_at" label="Created" width="120" >
+            <ElTableColumn prop="created_at" label="Created" width="150" >
                 <template slot-scope="{ row }">
                     <span class="font-medium break-normal">{{ row.created_at | formatDate }}</span>
                 </template>
             </ElTableColumn>
-            <ElTableColumn label="Start Date" width="120" >
+            <ElTableColumn label="Start Date" width="150" >
                 <template slot-scope="{ row }">
                     <span class="font-medium break-normal">{{ row.start_date | formatDate }}</span>
                 </template>
             </ElTableColumn>
-            <ElTableColumn prop="due_date" label="Due Date" width="120" >
+            <ElTableColumn prop="due_date" label="Due Date" width="150" >
                 <template slot-scope="{ row }">
                     <span class="font-medium break-normal">{{ row.due_date | formatDate }}</span>
                 </template>
             </ElTableColumn>
-            <ElTableColumn prop="estimated_hours" label="Estimate Hours" width="120">
+            <ElTableColumn prop="estimated_hours" label="Estimate Hours" width="150">
                 <template slot-scope="{ row }">
                     <span class="font-medium break-normal">{{ row.estimated_hours }}</span>
                 </template>
             </ElTableColumn>
-            <ElTableColumn prop="actual_hours" label="Actual Hours" width="120">
+            <ElTableColumn prop="actual_hours" label="Actual Hours" width="150">
                 <template slot-scope="{ row }">
                     <span class="font-medium break-normal">{{ row.actual_hours }}</span>
                 </template>
             </ElTableColumn>
-            <ElTableColumn prop="description" label="Description" width="120">
+            <ElTableColumn prop="description" label="Description" width="150">
                 <template slot-scope="{ row }">
-                    <span class="font-medium break-normal">{{ row.description }}</span>
+                    <span class="truncate font-medium break-normal">{{ row.description }}</span>
                 </template>
-            </ElTableColumn
-            <ElTableColumn fixed="right" label="Actions" width="120">
-                <el-button
-                type="text"
-                >
-                    Edit <i class="el-icon-edit"/>
-                </el-button>
+            </ElTableColumn>
+
+            <ElTableColumn fixed="right" label="Action" width="100">
+                <template slot-scope="{ row }">
+                    <span class="font-text">
+                        <Ionicon name="pencil" />
+                        <nuxt-link :to="`/projects/${project.slug}/issues/${row.id}/edit`">
+                            Edit
+                        </nuxt-link>
+                    </span>
+                </template>
             </ElTableColumn>
         </ElTable>
         <Pagination :data="pagination" />
@@ -156,6 +164,8 @@
                         return 'bg-green-500';
                     case 'open':
                         return 'bg-red-400';
+                    case 'closed':
+                        return 'bg-amber-500';
                 }
             },
             priorityClass(type) {
@@ -169,3 +179,9 @@
         }
     };
 </script>
+
+<style>
+    .font-text {
+        color: rgb(148 163 184);
+    }
+</style>

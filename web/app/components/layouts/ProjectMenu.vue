@@ -5,8 +5,13 @@
         </div>
         <ElDropdownMenu slot="dropdown">
             <ElDropdownItem v-for="project in projects" :key="project.id">
-                <ElButton type="text">
+                <ElButton @click="changeProject(project.slug)" type="text">
                     {{ project.name }}
+                </ElButton>
+            </ElDropdownItem>
+            <ElDropdownItem>
+                <ElButton @click="changeProject(project.slug)" type="text">
+                    Create Project
                 </ElButton>
             </ElDropdownItem>
         </ElDropdownMenu>
@@ -15,7 +20,7 @@
 
 <script>
     import { mapState } from 'vuex';
-
+    import { getProject } from '~/api/projects.js';
     export default {
 
         data() {
@@ -26,6 +31,16 @@
 
         computed: {
             ...mapState('projects', ['projects']),
+            ...mapState('organization', ['organization']),
         },
+
+        methods: {
+            async changeProject(slug) {
+                const {data: {data: project} } = await getProject(this.organization.slug, slug); 
+                this.$store.commit('project/setProject', project);
+                this.$router.push(`/projects/${project.slug}`);
+                console.log(project)
+            }
+        }
     };
 </script>

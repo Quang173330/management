@@ -39,7 +39,7 @@
                             Manage
                         </p>
                         <div class="font-thin text-sm whitespace-normal break-normal">
-                            Manager can manage monitor, access settings. Additionally, they have ability to add and
+                            Manager can manage issues, access settings. Additionally, they have ability to add and
                             remove member of projects that they are member of
                         </div>
                     </ElRadio>
@@ -58,14 +58,14 @@
 
         <div class="flex gap-x-2 mt-5">
             <ElButton
-                class="h-12 w-full text-base leading-130 font-bold bg-secondary-100 text-primary-600"
+                class="h-12 w-full text-base leading-130 font-bold"
                 :disabled="processing"
                 @click="close"
             >
                 Cancel
             </ElButton>
             <ElButton
-                class="h-12 w-full text-base leading-130 font-bold bg-primary-500 text-neutral-0"
+                class="h-12 w-full text-base leading-130 font-bold text-neutral-0"
                 type="primary"
                 :loading="processing"
                 @click="submit($refs.form, save)"

@@ -38,11 +38,13 @@ class WebInit extends Controller
                 'user' => null,
             ]);
         }
+        $projects = $user->projects;
+        $projects->load('users');
 
         return new MergeValue([
             'user' => UserResource::make($user),
             'organization' => OrganizationResource::make($user->organizations()->first()),
-            'projects' => ProjectResource::collection($user->projects),
+            'projects' => ProjectResource::collection($projects),
         ]);
     }
 }

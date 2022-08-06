@@ -21,12 +21,6 @@
         <SidebarItem :link="`/projects/${project.slug}/issues/board`" icon="stats-chart" index="board">
             Board
         </SidebarItem>
-        <SidebarItem :link="`/`" icon="document" index="wiki">
-            Wiki
-        </SidebarItem>
-        <SidebarItem :link="`/`" icon="file-tray" index="files">
-            Files
-        </SidebarItem>
         <SidebarItem :link="`/projects/${project.slug}/settings`" icon="settings" index="setting">
             Project Settings
         </SidebarItem>

@@ -96,7 +96,8 @@
             ...mapState('project', ['project']),
             links() {
                 return [
-                    { icon: 'home', title: this.project.name, link: '/' },
+                    { icon: 'folder-open', title: `${this.project.name}`, link: `/projects/${this.project.slug}` },
+                    { icon: 'add', title: 'Add Issue', link: `/projects/${this.project.slug}/add-issue` },
                 ];
             },
         },

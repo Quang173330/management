@@ -18,6 +18,7 @@ class Get extends Controller
     public function __invoke(Project $project, Request $request)
     {
         $milestones = $project->milestones;
+        $milestones->load('issues');
 
         return MilestoneResource::collection($milestones);
     }

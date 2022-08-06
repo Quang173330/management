@@ -18,4 +18,8 @@ class Category extends Model
         'project_id',
         'name',
     ];
+
+    public function issues() {
+        return $this->hasMany(Issue::class);
+    }
 }

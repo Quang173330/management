@@ -20,7 +20,7 @@ class Milestone extends Model
     ];
 
     public function issues() {
-        return $this->belongsToMany(Issue::class);
+        return $this->belongsToMany(Issue::class, 'issue_milestones');
     }
 
     public function project() {

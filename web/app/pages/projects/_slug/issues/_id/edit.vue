@@ -159,7 +159,7 @@
                         { required: true, message: 'Please pick a time', trigger: 'change' }
                     ],
                     milestone: [
-                        {required: true,  message: 'Please select Activity zone', trigger: 'change'}
+                        {message: 'Please select Activity zone', trigger: 'change'}
                     ],
                     priority: [
                         {required: true,  message: 'Please select issue priority', trigger: 'change'}

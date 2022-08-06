@@ -107,7 +107,6 @@
                 const { slug } = this.$route.params;
 
                 return [
-                    { icon: 'albums', title: 'Project', link: '/projects' },
                     { icon: 'folder-open', title: `${this.currentProject.name}`, link: `/projects/${slug}` },
                     { icon: 'cog', title: 'Settings', link: `/projects/${slug}/settings` },
                     { icon: 'people', title: 'Members', link: `/projects/${slug}/settings/users` },

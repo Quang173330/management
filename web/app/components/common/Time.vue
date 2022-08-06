@@ -1,6 +1,6 @@
 <template>
-    <div class="ml-6 border-l border-gray-300 p-4" :class="$style.datetime">
-        <p class="mb-2 text-gray-700">
+    <div class="flex flex-col gap-3 border-gray-300 items-center w-36" :class="$style.datetime">
+        <p class="text-neutral-400 font-medium text-xs">
             {{ title }}
         </p>
         <div
@@ -9,8 +9,9 @@
             :title="startTime | formatDate"
             class="flex items-center cursor-pointer"
         >
-            <Ionicon name="calendar" size="md" class="ml-px mr-2" />
-            <span class="truncate">{{ startTime | humanizeTime }}</span>
+            <span class="truncate text-neutral-400 font-medium text-xs py-2 px-3.5">
+                {{ startTime | humanizeTime }}
+            </span>
         </div>
         <div v-else class="flex items-center cursor-pointer">
             <span>-</span>

@@ -79,15 +79,13 @@
                 items-center border-l border-background-light-gray"
             >
                 <ElButton
-                    class="flex justify-center items-center bg-system-warning-500 text-neutral-0 text-13
-                    p-0 w-16 h-8 border-0 ml-0"
+                    type="primary"
                     @click.stop.prevent="edit(permission)"
                 >
                     Edit
                 </ElButton>
                 <ElButton
-                    class="flex justify-center items-center bg-system-error-500 text-neutral-0 text-13
-                    p-0 w-82 h-8 border-0 ml-2"
+                    type="danger"
                     @click.stop.prevent="remove(permission)"
                 >
                     Remove

@@ -10,11 +10,6 @@ export default {
         updateActiveItem(ref) {
             const keys = _omitBy(_map(ref.items, 'route'), _isNil);
             const matches = _filter(keys, (key) => (key === this.$route.path || (this.$route.path.startsWith(key) && key !== '/')));
-            if (this.$route.path.startsWith('/projects') && ref.items.home !== undefined) {
-                ref.open('albums');
-            } else {
-                ref.close('albums');
-            }
 
             if (matches.length) {
                 if (_maxBy(matches, 'length') === '/') {

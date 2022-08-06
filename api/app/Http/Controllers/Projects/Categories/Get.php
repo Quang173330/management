@@ -19,7 +19,7 @@ class Get extends Controller
     public function __invoke(Project $project, Request $request)
     {
         $categories = $project->categories;
-
+        $categories->load('issues');
         return CategoryResource::collection($categories);
     }
 }

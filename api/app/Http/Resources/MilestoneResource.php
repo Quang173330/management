@@ -18,6 +18,7 @@ class MilestoneResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'project' => $this->whenLoaded('project'),
+            'total_issue' => $this->whenLoaded('issues', $this->issues->count()),
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),
         ];

@@ -113,3 +113,24 @@ Route::group([
         });
     });
 });
+
+Route::group([
+    'prefix' => 'admin',
+    'namespace' => 'Admin',
+], function () {
+    Route::group([
+        'prefix' => 'projects',
+        'namespace' => 'Projects',
+    ], function () {
+        Route::get('', 'Get');
+        // Route::put('{project}', 'Update');
+    });
+
+    Route::group([
+        'prefix' => 'users',
+        'namespace' => 'Users',
+    ], function () {
+        Route::get('', 'Get');
+        // Route::put('{project}', 'Update');
+    });
+});

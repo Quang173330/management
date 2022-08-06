@@ -1,9 +1,16 @@
 <template>
     <ElDropdown>
-        <ElAvatar :src="user.avatar_url" />
-        <ElDropdownMenu slot="dropdown">
-            <ElDropdownItem>{{ user.name }}</ElDropdownItem>
+        <div class="flex items-center">
+            <ElAvatar :src="user.avatar_url" class="w-9 h-9" />
+            <div class="font-bold xs:test-sm md:text-base xs:ml-2 md:ml-3 flex items-center">
+                <p class="truncate">
+                    {{ user.name }}
+                </p>
+                <i class="el-icon-arrow-down el-icon--right xs:ml-3 md:ml-8" />
+            </div>
+        </div>
 
+        <ElDropdownMenu slot="dropdown">
             <ElDropdownItem v-if="user.is_admin">
                 <nuxt-link to="/admin" class="flex items-center" target="_blank">
                     <Ionicon name="cog" size="md" class="mr-2" />

@@ -148,7 +148,30 @@ module.exports.colors = {
         700: '#b45309',
         800: '#92400e',
         900: '#78350f',
-    }
+    },
+
+    primary: {
+        300: '#0679DE',
+        500: '#467CBD',
+        600: '#114C94',
+    },
+    neutral: {
+        0: '#FFFFFF',
+        300: '#EBEBEB',
+        400: '#ADADAD',
+        500: '#888888',
+        600: '#565656',
+        700: '#575757',
+        800: '#303030',
+    },
+    background: {
+        white: '#FFFFFF',
+    },
+
+    sidebar: {
+        500: '#EBF2FF',
+    },
+
 };
 
 module.exports.theme = {

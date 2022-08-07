@@ -17,14 +17,15 @@ export const actions = {
                     },
                 },
             } = await axios.get('/web-init');
-            const {data: {data: project} } = await axios.get(`/organizations/${organization.slug}/projects/${projects[0].slug}`)
-
             commit('setConfig', config);
             commit('setMessages', messages);
             commit('auth/setUser', authUser);
-            commit('organization/setOrganization', organization);
-            commit('projects/setProjects', projects);
-            commit('project/setProject', project);
+            if(authUser.user) {
+                const {data: {data: project} } = await axios.get(`/organizations/${organization.slug}/projects/${projects[0].slug}`)
+                commit('organization/setOrganization', organization);
+                commit('projects/setProjects', projects);
+                commit('project/setProject', project);
+            }
             _forEach(extras, (payload, action) => dispatch(action, payload));
         } catch (error) {
             commit('setError', error);

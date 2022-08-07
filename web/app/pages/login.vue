@@ -14,6 +14,7 @@ focus:outline-none active:shadow-sm"
 </template>
 <script>
     export default {
+        layout: 'login',
         middleware: ['guest'],
         methods: {
             loginGoogle() {

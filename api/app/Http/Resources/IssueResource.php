@@ -29,6 +29,7 @@ class IssueResource extends JsonResource
             'assign_id' => $this->assign_id,
             'category_id' => $this->category_id,
             'assign' => UserResource::make($this->whenLoaded('assign')),
+            'children' => IssueResource::collection($this->whenLoaded('children')),
             'owner' => UserResource::make($this->whenLoaded('owner')),
             'category' => CategoryResource::make($this->whenLoaded('category')),
             'milestones' => MilestoneResource::collection($this->whenLoaded(('milestones'))),

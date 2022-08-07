@@ -66,6 +66,14 @@ Route::group([
         'namespace' => 'Issues',
         'middleware' => 'can:view,project',
     ], function () {
+        Route::group([
+            'prefix' => '{issue}/comments',
+            'namespace' => 'Comments',
+        ], function () {
+            Route::get('', 'Get');
+            Route::post('', 'Store');
+        });
+
         Route::get('', 'Get');
         Route::get('{issue}', 'Show');
         Route::post('', 'Store');

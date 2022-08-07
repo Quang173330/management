@@ -39,12 +39,12 @@
                     <Ionicon v-else name="person-circle" class="ml-px mr-2 w-10 h-10" />
                     <div>
                         <div class="flex mb-1">
-                            <h4 class="font-medium text-base text-neutral-400">
+                            <h4 class="font-medium text-base text-slate-400">
                                 {{ name(issue.owner) }}
                             </h4>
                         </div>
                         <div>
-                            <p class="text-sm text-slate-400">
+                            <p class="text-sm text-neutral-400">
                                 Created {{ issue.created_at | formatDate }}
                             </p>
                         </div>
@@ -149,44 +149,69 @@
                     </div>
                 </div>
             </ElCard>
-            <!--
-            <div class="flex mt-5 mb-5 justify-between font-bold text-xl">
+            <div class="flex mt-5 mb-2 justify-between font-bold text-xl">
                 Comment
             </div>
-            <ElCard shadow="never" class="bg-white">
-               <div class="mt-5">
-                    <div class="font-bold">Details</div>
-                    <div class="flex justify-between">
-                        <div class="comment-child">
-                            <div>
-                                <p class="font-text">Assignee</p>
-                            </div>
-                            <hr>
+            <ElCard class="mb-3">
+                <ElForm
+                    ref="form"
+                    :model="form"
+                    :rules="rules"
+                >
+                    <ElFormItem prop="content" :error="serverErrors.content">
+                        <ElInput placeholder="Comment" type="textarea" :rows="5" v-model="form.content"></ElInput>
+                    </ElFormItem>
+                    <ElButton
+                        :loading="loading"
+                        class="float-right my-2"
+                        type="primary"
+                        @click="saveComment(form)"
+                    >
+                        Post Comment
+                    </ElButton>
+                </ElForm>
+            </ElCard>
+            <ElCard v-for="comment in comments" shadow="never" class="bg-white mb-3" >
+                <div class="flex">
+                    <ElAvatar
+                        v-if="comment.user.avatar_url"
+                        :src="comment.user.avatar_url"
+                        class="mr-2 w-12 h-12"
+                    />
+                    <Ionicon v-else name="person-circle" class="ml-px mr-2 w-10 h-10" />
+                    <div>
+                        <div class="flex mb-1">
+                            <h4 class="font-medium text-base text-slate-400">
+                                {{ name(comment.user) }}
+                            </h4>
                         </div>
-                        <div class="comment-child">
-                            <hr>
+                        <div>
+                            <p class="text-sm text-neutral-400">
+                                {{ comment.created_at | formatDate }}
+                            </p>
                         </div>
                     </div>
                 </div>
+                <div class="ml-14 mt-3">
+                    {{comment.content}}
+                </div>
             </ElCard>
-            -->
+            <Pagination :data="pagination" />
         </div>
-        <!--
-        <div class="main-comment">
-            <div class="flex mt-5 mb-5 justify-between font-bold text-xl">
-                Comment
-            </div>
-            <div class="main-issue bg-white">
-            </div>
-        </div>
-        -->
     </div>
 </template>
 <script>
+    import _mapValues from 'lodash/mapValues';
     import { mapState } from 'vuex';
     import { show } from '~/api/issues.js';
+    import { storeComment, getComment } from '~/api/comments.js';
     import dialogForm from '~/mixins/dialogForm';
+    import _concat from 'lodash/concat';
+    import Pagination from '~/components/common/Pagination.vue';
     export default {
+        components: {
+            Pagination,
+        },
         middleware: ['auth'],
         inject: ['setBreadcrumb'],      
                     
@@ -199,14 +224,31 @@
             },
         },
         
-        async asyncData({params}) {
+        async asyncData({params, query}) {
             const { id } = params;
             const { slug } = params;
             const { data: {data: issue} } = await show(slug, id);
-            console.log(issue);
+            const { data: {data, meta} } = await getComment(slug, id, {...query});
+            console.log(meta)
             return {
                 issue,
-                size: "small"
+                comments: data,
+                pagination: meta,
+            }
+        },
+
+        data() {
+            return {
+                loading: false,
+                form: {
+                    content: ''
+                },
+                rules: {
+                    content: [
+                        { required: true, message: 'Content is required', trigger: 'blur' },
+                    ],
+                },
+                serverErrors: {},
             }
         },
         created() {
@@ -245,6 +287,25 @@
                         return 'text-blue-500';
                 }
             },
+
+            async saveComment(data) {
+                try {
+                    this.loading = true;
+                    const { data: {data: comment} } = await storeComment(this.project.slug, this.issue.id, data);
+                    this.comments = _concat(comment, this.comments);
+                    this.loading = false;
+                    this.form.content = '';
+                }  catch (error) {
+                    if (error.response.status === 422) {
+                        this.serverErrors = _mapValues(error.response.data.errors, '0');
+                        console.log(this.serverErrors);
+                    } else {
+                        this.$message.error('Something went wrong, please try again later');
+                    }
+                    this.loading = false;
+                }
+
+            }
         }
 
 

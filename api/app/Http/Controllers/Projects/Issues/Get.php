@@ -36,7 +36,17 @@ class Get extends Controller
         // ->milestone($milestone)
         ->get($project);
 
-        $issues->load(['assign', 'milestones', 'category', 'owner']);
+        $issues->load([
+            'assign',
+            'milestones',
+            'category',
+            'owner',
+            'children',
+            'children.assign',
+            'children.milestones',
+            'children.category',
+            'children.owner',
+        ]);
         return IssueResource::collection($issues);
     }
 }

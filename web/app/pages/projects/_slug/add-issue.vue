@@ -10,6 +10,17 @@
                 <ElOption label="Bug" value="bug"></ElOption>
             </ElSelect>
         </ElFormItem>
+        <ElFormItem label="Parent" prop="parent_id">
+            <ElSelect v-model="form.parent_id" placeholder="Parent" filterable remote :remote-method="getIssues">
+                <ElOption
+                    v-for="item in issues"
+                    :key="item.id"
+                    :value="item.id"
+                    :label="item.title"
+                    class="items-center	flex"
+                />
+            </ElSelect>
+        </ElFormItem>
         <ElFormItem label="Description" prop="description">
             <ElInput placeholder="Issue description" type="textarea" :rows="5" v-model="form.description"></ElInput>
         </ElFormItem>
@@ -85,7 +96,7 @@
 <script>
     import { mapState } from 'vuex';
     import { get } from '~/api/milestones.js';
-    import { store } from '~/api/issues.js';
+    import { get as getIssues, store } from '~/api/issues.js';
     import { getUsers, getCategories } from '~/api/projects.js';
     import dialogForm from '~/mixins/dialogForm';
     export default {
@@ -112,6 +123,7 @@
                 users: [],
                 milestones: [],
                 categories: [],
+                issues: [],
                 loading: false,
                 form: {
                     parent_id: null,
@@ -174,6 +186,12 @@
                 this.milestones = milestones;
                 this.users = users;
                 this.categories = categories;
+            },
+
+            async getIssues(title) {
+                const { slug } = this.$route.params;
+                const {data: { data: issues } } = await getIssues(slug, {title});
+                this.issues = issues;
             },
             async createIssue(data) {
                 try {

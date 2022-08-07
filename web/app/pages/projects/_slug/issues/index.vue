@@ -2,8 +2,8 @@
     <div class="m-5">
         <IssueFilter />
         <Pagination :data="pagination" />
-        <ElTable class="mt-5" :data="issues" style="width: 100%">
-            <ElTableColumn label="Issue Type" width="150">
+        <ElTable row-key="id" class="mt-5" :data="issues" style="width: 100%">
+            <ElTableColumn label="Issue Type" width="200">
                 <template slot-scope="{ row }">
                     <span
                         class=" capitalize text-center w-28 font-medium inline-block py-1 rounded-3xl text-white text-sm"

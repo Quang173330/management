@@ -49,4 +49,16 @@ class Issue extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+
+    public function children()
+    {
+        return $this->hasMany(Issue::class, 'parent_id', 'id');
+    }
 }

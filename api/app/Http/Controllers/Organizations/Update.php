@@ -19,6 +19,7 @@ class Update extends Controller
     {
         $data = $request->only(['name', 'description']);
         $organization->update($data);
+        $organization->load('owner');
 
         return OrganizationResource::make($organization);
     }

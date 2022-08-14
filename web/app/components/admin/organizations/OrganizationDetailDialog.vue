@@ -1,62 +1,32 @@
 <template>
-    <ElDialog v-if="project" :visible.sync="show" append-to-body>
+    <ElDialog v-if="organization" :visible.sync="show" append-to-body>
         <div class="flex justify-between mb-6">
             <h2 class="text-lg font-bold">
-                {{ project.name }}
+                {{ organization.name }}
             </h2>
         </div>
         <h3 class="text-lg font-bold">
-            List Monitor
+            List Projects
         </h3>
         <div class="flex justify-between">
-            <ElTable :data="project.monitors" fit>
+            <ElTable :data="organization.projects" fit>
                 <ElTableColumn label="Name">
                     <template slot-scope="{ row }">
                         <span class="font-medium">{{ row.name }}</span>
                     </template>
                 </ElTableColumn>
-                <ElTableColumn label="Type">
+                <ElTableColumn label="Description">
                     <template slot-scope="{ row }">
-                        <span class="font-medium">{{ row.type }}</span>
-                    </template>
-                </ElTableColumn>
-                <ElTableColumn label="Url">
-                    <template slot-scope="{ row }">
-                        <span class="font-medium">{{ row.url }}</span>
-                    </template>
-                </ElTableColumn>
-                <ElTableColumn label="Method">
-                    <template slot-scope="{ row }">
-                        <span class="font-medium">{{ row.method }}</span>
-                    </template>
-                </ElTableColumn>
-                <ElTableColumn label="Regions">
-                    <template slot-scope="{ row }">
-                        <span v-for="item in row.monitor_regions" :key="item.id" class="font-medium">
-                            {{ item.region_name }} - {{ item.worker_name }} <br>
-                        </span>
-                    </template>
-                </ElTableColumn>
-                <ElTableColumn label="Status" width="100px">
-                    <template slot-scope="{ row }">
-                        <ElSwitch
-                            v-model="row.is_active"
-                            active-color="#13ce66"
-                            @change="updateActiveMonitor(row)"
-                        />
-                        <i
-                            v-if="loadingActiveMonitor && indexMonitor === row.id"
-                            class="el-icon-loading text-gray-600 ml-2"
-                        />
+                        <span class="font-medium">{{ row.description }}</span>
                     </template>
                 </ElTableColumn>
             </ElTable>
         </div>
         <h3 class="text-lg font-bold mt-6">
-            List User
+            List Users
         </h3>
         <div class="flex justify-between">
-            <ElTable :data="project.permissions" fit>
+            <ElTable :data="organization.permissions" fit>
                 <ElTableColumn label="User">
                     <template slot-scope="{ row }">
                         <div class="flex items-center">
@@ -104,7 +74,7 @@
 
     export default {
         props: {
-            project: {
+            organization: {
                 type: Object,
             },
         },
@@ -113,9 +83,6 @@
             loadingActiveMonitor: false,
             indexMonitor: null,
         }),
-
-        created() {
-        },
 
         methods: {
             open() {
@@ -135,20 +102,6 @@
                 }
 
                 return 'Member';
-            },
-            async updateActiveMonitor({ id, ...formData }) {
-                this.loadingActiveMonitor = true;
-                this.indexMonitor = id;
-                await updateMonitor(this.project.slug, id, formData).then(({ data: { data: monitor } }) => {
-                    const indexParent = _findIndex(this.project.monitors, ['id', monitor.id]);
-                    if (indexParent !== -1) {
-                        // eslint-disable-next-line vue/no-mutating-props
-                        this.project.monitors.splice(indexParent, 1, monitor);
-                    }
-                });
-                this.loadingActiveMonitor = false;
-                this.indexMonitor = null;
-                this.$message.success(formData.is_active === true ? 'Success enable monitor' : 'Success disable monitor');
             },
         },
     };

@@ -1,12 +1,15 @@
 <template>
-    <div class="mx-20 my-10">
-        <div class="text-xl text-center font-bold">{{organization.name}}</div>
-        <div class="my-10">
+    <div v-if="organization" class="mx-20 my-10">
+        <div v-if="!editing" class="text-xl text-center font-bold">{{organization.name}} <i class="el-icon-edit cursor-pointer text-xl ml-1 mt-1" @click="editOrganization()" /> </div>
+        <OrganizationForm v-else="editing" :cancel="cancel" :editing="editing" :save="saveOrganization" :server-errors="serverErrors" :organization="organization" />
+        <div class="my-10 mt-10">
             <ElCard class="w-full" shadow="never">
                 <div slot="header" class="clearfix">
                     <span>List Projects</span>
-                    <el-button style="float: right; padding: 3px 0" type="text">Create Project</el-button>
+                    <el-button style="float: right; padding: 3px 0" type="text" @click="() => $refs.projectForm.open()">Create Project</el-button>
                 </div>
+
+                <Pagination :data="paginationProject" />
                 <div v-for="project in projects" :key="project.id" class="mb-4 md:mb-6">
                     <ElCard shadow="never" body-style="padding: 0">
                         <div class="flex items-center justify-between h-24">
@@ -56,7 +59,7 @@
                                 <div class="mr-5">
                                     <ElButton
                                         :disabled="!project.permission.write"
-                                        @click.prevent="edit(project)"
+                                        @click.prevent="editProject(project)"
                                     >
                                         <Ionicon
                                             name="pencil"
@@ -78,6 +81,8 @@
                         </div>
                     </ElCard>
                 </div>
+                <Pagination :data="paginationProject" />
+                <ProjectForm ref="projectForm" :save="saveProject"/>
             </ElCard>
         </div>
         <div class="my-10 mt-10">
@@ -93,7 +98,7 @@
                         :edit="edit"
                         :loading="loading"
                         :index-clicked-delete="indexClickedDelete"
-                        :owner-id="project.owner.id"
+                        :owner-id="organization.owner.id"
                         :remove="remove"
                     />
 
@@ -101,26 +106,36 @@
                 </div>
             </ElCard>
         </div>
+    </div>
 
+    <div v-else class="mx-20 my-10">
+        <OrganizationForm :save="saveOrganization" :server-errors="serverErrors" />
     </div>
 </template>
 
 <script>
     import { mapState } from 'vuex';
-        import _concat from 'lodash/concat';
+    import _concat from 'lodash/concat';
     import _assign from 'lodash/assign';
     import _omit from 'lodash/omit';
     import _filter from 'lodash/filter';
     import _findIndex from 'lodash/findIndex';
     import Time from '~/components/common/Time.vue';
     import {
-        inviteUser, getUsers, removeUser, updatePermissionUser,
+        store, getProjects, update
     } from '~/api/projects';
-        import role from '~/mixins/role';
+    import {
+        getOrganizations, getUsers, inviteUser, updatePermissionUser, removeUser, store as storeOrganization, update as updateOrganization
+    } from '~/api/organizations';
+    import role from '~/mixins/role';
     import UserForm from '~/components/projects/users/UserForm.vue';
+    import ProjectForm from '~/components/projects/ProjectForm.vue';
     import UserList from '~/components/projects/users/List.vue';
     import UserFilter from '~/components/projects/users/UserFilter.vue';
     import Pagination from '~/components/common/Pagination.vue';
+    import OrganizationForm from '~/components/organizations/OrganizationForm.vue';
+    import _mapValues from 'lodash/mapValues';
+
     export default {
         layout: 'blank',
         components: {
@@ -129,41 +144,57 @@
             UserList,
             UserFilter,
             Pagination,
+            ProjectForm,
+            OrganizationForm,
         },
+        mixins: [role],
         middleware: ['auth'],
         inject: ['setBreadcrumb'],
+
         async asyncData({ params, query }) {
 
-            const { data: { data, meta } } = await getUsers('project-management',  {...query});
+            const {data : {data: organization } } =  await getOrganizations();
+            console.log(organization)
+            if(organization) {
+                const { data: {data : projects, meta: paginationProject} } = await getProjects(organization.slug ,  {...query});
+                const { data: { data, meta } } = await getUsers(organization.slug,  {...query});
 
-            return {
-                permissions: data,
-                pagination: meta,
-                loading: false,
-                indexClickedDelete: 0,
-                loadingDelete: false,
-                editableTabsValue: '0',
-            };
+                return {
+                    organization,
+                    projects,
+                    paginationProject,
+                    permissions: data,
+                    pagination: meta,
+                    loading: false,
+                    indexClickedDelete: 0,
+                    loadingDelete: false,
+                    editableTabsValue: '0',
+                    serverErrors: {},
+                    editing: false,
+                };
+            } else {
+                return {
+                    organization,
+                    serverErrors: {},
+                    editing: false,
+                }
+            }
+
+
         },
-        computed: {
-            ...mapState('organization', ['organization']),
-            ...mapState('projects', ['projects']),
-            ...mapState('project', ['project']),
-            totalUser(project) {
-                return project.users.length;
-            },
-            getUser(project) {
-                return _filter(project.users, (user) => user.avatar_url).slice(0, 3);
-            },
-        },
+        watchQuery: true,
 
         methods: {
+            editOrganization(){
+                this.editing = true;
+                console.log('sasa')
+            },
             openUserForm() {
                 this.$refs.form.open();
             },
             async remove(permission) {
                 try {
-                    const { slug } = this.$route.params;
+                    const slug = this.organization.slug;
 
                     this.loading = true;
                     this.indexClickedDelete = permission.id;
@@ -174,10 +205,6 @@
                     await removeUser(slug, permission.id);
 
                     this.permissions = _filter(this.permissions, (item) => item.id !== permission.id);
-                    if (permission.user.id === this.currentProject.permission.user_id) {
-                        this.$store.commit('projects/removeProject', this.currentProject);
-                        this.$router.push('/projects');
-                    }
                     this.$message.success('Success remove user');
                 } catch (e) {
                     if (e.response && e.response.status === 403) {
@@ -189,6 +216,49 @@
                     this.loading = false;
                     this.indexClickedDelete = 0;
                 }
+            },
+
+            async saveOrganization(data) {
+                const action = data.id ? this.updateOrganization(data) : this.createOrganization(data);
+            },
+
+            async createOrganization(data) {
+                try {
+                    const { data : { data: organization } } = await storeOrganization(data);
+                    location.reload();
+                    this.$message.success('Organization create success');
+                    this.serverErrors = {};
+                } catch (error) {
+                    if (error.response.status === 422) {
+                        this.serverErrors = _mapValues(error.response.data.errors, '0');
+                    } else {
+                        this.$message.error('Something went wrong, please try again later');
+                    }                 
+                }
+            },
+
+            async updateOrganization(data) {
+                try {
+                    const { data : { data: organization } } = await updateOrganization(data.id, data);
+                    this.organization = organization;
+                    this.$message.success('Organization update success');
+                    this.serverErrors = {};
+                    this.editing = false;
+                } catch (error) {
+                    if (error.response.status === 422) {
+                        this.serverErrors = _mapValues(error.response.data.errors, '0');
+                    } else {
+                        this.$message.error('Something went wrong, please try again later');
+                    }                 
+                }
+            },
+
+            async cancel() {
+                this.editing = false;
+            },
+
+            editProject(project) {
+                this.$refs.projectForm.open(project);
             },
 
             edit(subscription) {
@@ -209,9 +279,55 @@
                 this.$refs.form.close();
             },
 
+            async saveProject(data) {
+                const action = data.id ? this.updateProject(data) : this.createProject(data);
+
+                await action;
+                this.$refs.projectForm.close();
+            },
+
+            async createProject(data) {
+                try {
+                    const slug  = this.organization.slug;
+                    const { data: {data: project} } = await store(slug, data);
+                    console.log(project)
+                    this.projects = _concat(project, this.projects);
+                    this.$message.success('Create project success');
+                } catch (e) {
+                    if (e.response.status === 403) {
+                        this.$message.error(e.response.data.message);
+                    } else if(e.response.status === 422){
+                        this.$message.error(e.response.data.message);
+                    }
+                    else{
+                        this.$message.error('Something went wrong, please try again later');
+                    }
+                }
+            },
+
+
+            async updateProject(data) {
+                try {
+                    const slug  = this.organization.slug;
+                    const { data: {data: project} } = await update(slug, data.slug, data);
+                    const indexParent = _findIndex(this.projects, ['id', project.id]);
+                    if (indexParent !== -1) {
+                        this.projects.splice(indexParent, 1, project);
+                    }
+                } catch (e) {
+                    if (e.response.status === 403) {
+                        this.$message.error(e.response.data.message);
+                    } else if(e.response.status === 422){
+                        this.$message.error(e.response.data.message);
+                    } else{
+                        this.$message.error('Something went wrong, please try again later');
+                    }
+                }
+            },
+
             async create(data) {
                 try {
-                    const { slug } = this.$route.params;
+                    const slug  = this.organization.slug;
                     const { data: { data: permission } } = await inviteUser(slug, data);
                     const indexParent = _findIndex(this.permissions, ['id', permission.id]);
                     if (indexParent === -1) {
@@ -222,7 +338,11 @@
                 } catch (e) {
                     if (e.response.status === 403) {
                         this.$message.error(e.response.data.message);
-                    } else {
+                    } else if(e.response.status === 422){
+                        console.log(e.response);
+                        this.$message.error(e.response.data.message);
+                    }
+                    else{
                         this.$message.error('Something went wrong, please try again later');
                     }
                 }
@@ -230,16 +350,14 @@
 
             async update(id, changes) {
                 try {
-                    const { slug } = this.$route.params;
+                    const slug  = this.organization.slug;
                     const { data: { data: permission } } = await updatePermissionUser(id, slug, changes);
                     const indexParent = _findIndex(this.permissions, ['id', permission.id]);
                     if (indexParent !== -1) {
                         this.permissions.splice(indexParent, 1, permission);
                     }
-                    if (!permission.admin && permission.user.id === this.currentProject.permission.user_id) {
-                        this.$router.push('/projects');
-                    }
                 } catch (e) {
+                    console.log('s')
                     if (e.response.status === 403) {
                         this.$message.error(e.response.data.message);
                     }

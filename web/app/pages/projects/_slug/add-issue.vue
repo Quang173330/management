@@ -77,6 +77,7 @@
                             v-for="item in users"
                             :key="item.id"
                             :value="item.user.id"
+                            :label="item.user.name"
                             class="items-center	flex"
                         >
                             <ElAvatar size="small mr-2" :src="item.user.avatar_url"/> {{item.user.name}}
@@ -154,25 +155,25 @@
                         { type: 'date', required: true, message: 'Please pick a date', trigger: 'change' }
                     ],
                     start_date: [
-                        { type: 'date', required: true, message: 'Please pick a time', trigger: 'change' }
+                        { type: 'date', required: true, message: 'Please pick a date', trigger: 'change' }
                     ],
                     milestone: [
-                        {required: true,  message: 'Please select Activity zone', trigger: 'change'}
+                        {required: true,  message: 'Please select a milestone', trigger: 'change'}
                     ],
                     priority: [
-                        {required: true,  message: 'Please select issue priority', trigger: 'change'}
+                        {required: true,  message: 'Please select a priority', trigger: 'change'}
                     ],
                     estimated_hours: [
-                        {required: true,  message: 'Please select issue priority', trigger: 'change'}
+                        {required: true,  message: 'Please inout an estimated hours', trigger: 'change'}
                     ],
                     actual_hours: [
-                        {required: true,  message: 'Please select issue priority', trigger: 'change'}
+                        {required: true,  message: 'Please input an actual hours', trigger: 'change'}
                     ],
                     assign_id: [
-                        {required: true,  message: 'Please select issue priority', trigger: 'change'}
+                        {required: true,  message: 'Please select an assignee', trigger: 'change'}
                     ],
                     category_id: [
-                        {required: true,  message: 'Please select issue priority', trigger: 'change'}
+                        {required: true,  message: 'Please select a category', trigger: 'change'}
                     ],
                 }
             };
@@ -199,22 +200,11 @@
                     const { slug } = this.$route.params;
                     this.loading = true;
                     const { data: { data: issue } } = await store(slug, data);
-                    console.log(issue);
                     this.$router.push(`/projects/${slug}/issues`);
                     this.$message.success('Create issue success');    
-                    // this.$refs.form.validate(async (valid) => {
-                    //     if (valid) {
-                    //         const { slug } = this.$route.params;
-                    //         this.loading = true;
-                    //         const { data: { data: issue } } = await store(slug, data);
-                    //         console.log(issue);
-                    //         this.$router.push(`/projects/${slug}/issues`);
-                    //         this.$message.success('Create issue success');                        
-                    //     }
-                    // });
                 } catch (e) {
                     if(e.response.status === 422) {
-                        this.$message.error('Error, Invalid input');
+                        this.$message.error('The given data was invalid');
                     } else {
                         this.$message.error('Something went wrong, please try again later');
                     }

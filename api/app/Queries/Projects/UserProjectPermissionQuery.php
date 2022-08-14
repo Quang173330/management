@@ -52,7 +52,7 @@ class UserProjectPermissionQuery
     protected function applyEmailFilter($query)
     {
         if ($this->email) {
-            $query->join('users', 'users.id', 'project_permissions.user_id')->where('users.email', 'LIKE', "%$this->email%");
+            $query->join('users', 'users.id', 'project_permissions.user_id')->select('project_permissions.*')->where('users.email', 'LIKE', "%$this->email%");
         }
 
         return $query;

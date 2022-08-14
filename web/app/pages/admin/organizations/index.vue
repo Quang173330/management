@@ -4,7 +4,7 @@
             <OrganizationFilter />
         </div>
         <ElTable
-            :data="projects"
+            :data="organizations"
             row-key="id"
             style="width: 100%"
             cell-class-name="pr-5"
@@ -19,9 +19,9 @@
                     <span class="break-normal">{{ row.description }}</span>
                 </template>
             </ElTableColumn>
-            <ElTableColumn label="Project" width="120">
+            <ElTableColumn label="Projects" width="120">
                 <template slot-scope="{ row }">
-                    <span class="font-medium pl-4">{{ countMonitors(row) }}</span>
+                    <span class="font-medium pl-4">{{ countProjects(row) }}</span>
                 </template>
             </ElTableColumn>
             <ElTableColumn label="Users" width="120">
@@ -41,6 +41,8 @@
                 </template>
             </ElTableColumn>
         </ElTable>
+        <OrganizationDialog ref="form" :save="save" />
+        <OrganizationDetailDialog ref="organization" :organization="organization" />
         <Pagination :data="pagination" />
     </div>
 </template>
@@ -48,45 +50,46 @@
 <script>
     import _findIndex from 'lodash/findIndex';
     import {
-        getProjects,
-        updateProject,
-    } from '~/api/admin/projects';
+        get,
+        update,
+    } from '~/api/admin/organizations';
     import Pagination from '~/components/common/Pagination.vue';
     import OrganizationFilter from '~/components/admin/organizations/OrganizationFilter.vue';
-    // import ProjectDialog from '~/components/admin/projects/ProjectDialog.vue';
-    // import EditProjectDialog from '~/components/projects/ProjectDialog.vue';
+    import OrganizationDialog from '~/components/organizations/OrganizationDialog.vue';
+    import OrganizationDetailDialog from '~/components/admin/organizations/OrganizationDetailDialog.vue';
+
 
     export default {
         components: {
             Pagination,
             OrganizationFilter,
-            // ProjectDialog,
-            // EditProjectDialog,
+            OrganizationDialog,
+            OrganizationDetailDialog,
         },
 
         inject: ['setBreadcrumb'],
         layout: 'admin',
 
         async asyncData({ query }) {
-            const { data: { data, meta } } = await getProjects(query);
+            const { data: { data, meta } } = await get(query);
 
             return {
-                projects: data,
+                organizations: data,
                 pagination: meta,
-                project: null,
+                organization: null,
             };
         },
 
         head() {
             return {
-                title: 'Project',
+                title: 'Organization',
             };
         },
 
         computed: {
             links() {
                 return [
-                    { icon: 'albums', title: 'Project', link: '/admin/projects' },
+                    { icon: 'albums', title: 'Organization', link: '/admin/organizations' },
                 ];
             },
 
@@ -99,28 +102,31 @@
         },
 
         methods: {
-            countMonitors(project) {
-                return project.issues.length;
+            countProjects(organization) {
+                return organization.projects.length;
             },
 
-            countUsers(project) {
-                return project.permissions.length;
+            countUsers(organization) {
+                return organization.permissions.length;
             },
-            show(project) {
-                this.project = project;
-                this.$refs.project.open();
+            show(organization) {
+                this.organization = organization;
+                console.log(this.$refs)
+                this.$refs.organization.open();
             },
-            edit(project) {
-                this.$refs.update.open(project);
+            edit(organization) {
+                this.$refs.form.open(organization);
             },
             async save(data) {
-                await updateProject(data.id, data).then(({ data: { data: project } }) => {
-                    const indexParent = _findIndex(this.projects, ['id', project.id]);
+                await update(data.slug, data).then(({ data: { data: organization } }) => {
+                    const indexParent = _findIndex(this.organizations, ['id', organization.id]);
+                    console.log(organization)
+                    console.log(indexParent)
                     if (indexParent !== -1) {
-                        this.projects.splice(indexParent, 1, project);
+                        this.organizations.splice(indexParent, 1, organization);
                     }
                 });
-                this.$refs.update.close();
+                this.$refs.form.close();
             },
         },
     };

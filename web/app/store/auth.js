@@ -16,7 +16,7 @@ export const actions = {
 
     async logout() {
         await logout();
-        window.location.href = '/';
+        window.location.href = '/login';
     },
 };
 

@@ -37,8 +37,8 @@ class IssuesQuery
     public function get(Project $project)
     {
         return $this->getQuery($project)
-            ->latest()
-            ->paginate();
+        ->orderby('issues.created_at', 'desc')
+        ->paginate();
     }
 
      /**
@@ -57,7 +57,7 @@ class IssuesQuery
         $this->applyStatusFilter($query);
         $this->applyTitleFilter($query);
         $this->applyCategoryFilter($query);
-        // $this->applyMilestoneFilter($query);
+        $this->applyMilestoneFilter($query);
 
         return $query;
     }
@@ -194,12 +194,13 @@ class IssuesQuery
         return $query;
     }
 
-    // protected function applyMilestoneFilter($query)
-    // {
-    //     if ($this->milestone) {
-    //         $query->milestone()->where('id', $this);
-    //     }
+    protected function applyMilestoneFilter($query)
+    {
+        if ($this->milestone) {
+            $query->join('issue_milestones', 'issue_milestones.issue_id', 'issues.id')
+            ->join('milestones', 'issue_milestones.milestone_id', 'milestones.id' )->select('issues.*')->where('milestones.id', $this->milestone);
+        }
 
-    //     return $query;
-    // }
+        return $query;
+    }
 }

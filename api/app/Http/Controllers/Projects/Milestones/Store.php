@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects\Milestones;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\MilestoneResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
@@ -22,6 +23,6 @@ class Store extends Controller
 
         $milestone = $project->milestones()->create($data);
 
-        return $milestone;
+        return MilestoneResource::make($milestone);
     }
 }

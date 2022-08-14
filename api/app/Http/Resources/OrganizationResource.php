@@ -20,6 +20,9 @@ class OrganizationResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'permission' => $this->whenLoaded('permission'),
+            'permissions' => $this->whenLoaded('permissions'),
+            'owner' => UserResource::make($this->whenLoaded('owner')),
+            'projects' => $this->whenLoaded('projects'),
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),
         ];

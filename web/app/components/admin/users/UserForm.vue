@@ -10,10 +10,6 @@
                 <ElInput v-model="form.name" name="name" />
             </ElFormItem>
 
-            <ElFormItem label="Username" prop="username" :error="serverErrors.username">
-                <ElInput v-model="form.username" name="username" />
-            </ElFormItem>
-
             <ElFormItem label="Status" prop="is_active" :error="serverErrors.is_active">
                 <ElSwitch
                     v-model="form.is_active"
@@ -54,7 +50,6 @@
 
     const defaultValues = () => ({
         name: '',
-        username: '',
     });
 
     export default {
@@ -70,7 +65,6 @@
         data: () => ({
             rules: {
                 name: 'required',
-                username: 'required',
             },
         }),
 

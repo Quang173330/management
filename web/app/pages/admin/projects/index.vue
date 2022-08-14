@@ -36,11 +36,12 @@
             </ElTableColumn>
             <ElTableColumn width="250">
                 <template slot-scope="{ row }">
-                    <ElButton icon="el-icon-view" size="mini" @click="show(row)" />
-                    <ElButton icon="el-icon-edit" size="mini" @click="edit(row)" />
+                    <ElButton icon="el-icon-edit" size="mini" @click.prevent="edit(row)" />
                 </template>
             </ElTableColumn>
+
         </ElTable>
+        <ProjectForm ref="form" :save="save" />
         <Pagination :data="pagination" />
     </div>
 </template>
@@ -53,15 +54,13 @@
     } from '~/api/admin/projects';
     import Pagination from '~/components/common/Pagination.vue';
     import ProjectFilter from '~/components/admin/projects/ProjectFilter.vue';
-    // import ProjectDialog from '~/components/admin/projects/ProjectDialog.vue';
-    // import EditProjectDialog from '~/components/projects/ProjectDialog.vue';
+    import ProjectForm from '~/components/projects/ProjectForm.vue';
 
     export default {
         components: {
             Pagination,
             ProjectFilter,
-            // ProjectDialog,
-            // EditProjectDialog,
+            ProjectForm,
         },
 
         inject: ['setBreadcrumb'],
@@ -106,12 +105,8 @@
             countUsers(project) {
                 return project.permissions.length;
             },
-            show(project) {
-                this.project = project;
-                this.$refs.project.open();
-            },
             edit(project) {
-                this.$refs.update.open(project);
+                this.$refs.form.open(project);
             },
             async save(data) {
                 await updateProject(data.id, data).then(({ data: { data: project } }) => {
@@ -120,7 +115,7 @@
                         this.projects.splice(indexParent, 1, project);
                     }
                 });
-                this.$refs.update.close();
+                this.$refs.form.close();
             },
         },
     };

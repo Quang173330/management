@@ -16,8 +16,12 @@ class Get extends Controller
      */
     public function __invoke(Request $request)
     {
-        $organizations = $request->user()->organizations()->first();
+        $user = $request->user();
+        $organization = $user->organizations()->first();
+        if($organization) {
+            $organization->load('owner');
+            return OrganizationResource::make($organization);
+        } else return null;
 
-        return OrganizationResource::make($organizations);
     }
 }

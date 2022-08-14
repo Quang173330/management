@@ -18,7 +18,8 @@ class Get extends Controller
     public function __invoke(Organization $organization, Request $request)
     {
         $user = $request->user();
-        $projects = $user->projects()->paginate();
+        $projects = $user->projects()->latest()->paginate();
+        $projects->load('users');
         return ProjectResource::collection($projects);
     }
 }

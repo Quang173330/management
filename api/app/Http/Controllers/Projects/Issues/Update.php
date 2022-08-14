@@ -35,7 +35,7 @@ class Update extends Controller
 
         $issue->update($data);
         $milestoneId = $request->input('milestone');
-        $issue->milestones()->attach($milestoneId);
+        $issue->milestones()->syncWithoutDetaching($milestoneId);
 
         return IssueResource::make($issue);
     }

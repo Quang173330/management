@@ -7,73 +7,85 @@
             List Categories
         </h1>
         <div>
-        <ElButton type="primary" class="float-right	">Add Category</ElButton>
-        <ElTable class="mt-5" :data="categories">
-            <ElTableColumn label="Name" >
-                <template slot-scope="{ row }">
-                    <span class="font-medium truncate">{{ row.name }}</span>
-                </template>
-            </ElTableColumn>
-            <ElTableColumn label="Issues">
-                <template slot-scope="{ row }">
-                    <span class="font-medium truncate">{{ row.total_issue }}</span>
-                </template>
-            </ElTableColumn>
-            <ElTableColumn label="Created at">
-                <template slot-scope="{ row }">
-                    <span class="font-medium truncate">{{ row.created_at | formatDate }}</span>
-                </template>
-            </ElTableColumn>
-            <ElTableColumn label="Action" width="100">
-                <template slot-scope="{ row }">
-                    <ElButton size="mini">Edit</ElButton>
-                </template>
-            </ElTableColumn>
-        </ElTable>
+            <ElButton type="primary" class="float-right" @click="() => $refs.categoryForm.open()">Add Category</ElButton>
+            <ElTable class="mt-5" :data="categories">
+                <ElTableColumn label="Name" >
+                    <template slot-scope="{ row }">
+                        <span class="font-medium truncate">{{ row.name }}</span>
+                    </template>
+                </ElTableColumn>
+                <ElTableColumn label="Issues">
+                    <template slot-scope="{ row }">
+                        <span class="font-medium truncate">{{ row.total_issue }}</span>
+                    </template>
+                </ElTableColumn>
+                <ElTableColumn label="Created at">
+                    <template slot-scope="{ row }">
+                        <span class="font-medium truncate">{{ row.created_at | formatDate }}</span>
+                    </template>
+                </ElTableColumn>
+                <ElTableColumn label="Action" width="100">
+                    <template slot-scope="{ row }">
+                        <ElButton size="mini" @click.prevent="editCategory(row)">Edit</ElButton>
+                    </template>
+                </ElTableColumn>
+            </ElTable>
+            <CategoryForm ref="categoryForm" :save="saveCategory" />
         </div>
 
         <h1 class="font-bold mt-5 text-xl text-neutral-800 mb-4">
             List Milestones
         </h1>
         <div>
-        <ElButton type="primary" class="float-right	">Add Milestone</ElButton>
-        <ElTable class="mt-5" :data="milestones">
-            <ElTableColumn label="Name" >
-                <template slot-scope="{ row }">
-                    <span class="font-medium truncate">{{ row.name }}</span>
-                </template>
-            </ElTableColumn>
-            <ElTableColumn label="Issues">
-                <template slot-scope="{ row }">
-                    <span class="font-medium truncate">{{ row.total_issue }}</span>
-                </template>
-            </ElTableColumn>
-            <ElTableColumn label="Created at">
-                <template slot-scope="{ row }">
-                    <span class="font-medium truncate">{{ row.created_at | formatDate }}</span>
-                </template>
-            </ElTableColumn>
-            <ElTableColumn label="Action" width="100">
-                <template slot-scope="{ row }">
-                    <ElButton size="mini">Edit</ElButton>
-                </template>
-            </ElTableColumn>
-        </ElTable>
+            <ElButton type="primary" class="float-right" @click="() => $refs.milestoneForm.open()">Add Milestone</ElButton>
+            <ElTable class="mt-5" :data="milestones">
+                <ElTableColumn label="Name" >
+                    <template slot-scope="{ row }">
+                        <span class="font-medium truncate">{{ row.name }}</span>
+                    </template>
+                </ElTableColumn>
+                <ElTableColumn label="Issues">
+                    <template slot-scope="{ row }">
+                        <span class="font-medium truncate">{{ row.total_issue }}</span>
+                    </template>
+                </ElTableColumn>
+                <ElTableColumn label="Created at">
+                    <template slot-scope="{ row }">
+                        <span class="font-medium truncate">{{ row.created_at | formatDate }}</span>
+                    </template>
+                </ElTableColumn>
+                <ElTableColumn label="Action" width="100">
+                    <template slot-scope="{ row }">
+                        <ElButton size="mini" @click.prevent="editMilestone(row)">Edit</ElButton>
+                    </template>
+                </ElTableColumn>
+            </ElTable>
+            <MilestoneForm ref="milestoneForm" :save="saveMilestone" />
         </div>
     </div>
 </template>
 
 <script>
     import _mapValues from 'lodash/mapValues';
+    import _concat from 'lodash/concat';
+    import _findIndex from 'lodash/findIndex';
+    import { mapState } from 'vuex';
     import {
         update,
-        getCategories
+        getCategories,
+        storeCategory,
+        updateCategory,
     } from '~/api/projects';
-    import { get } from '~/api/milestones.js';
+    import { get, store as storeMilestone, update as updateMilestone } from '~/api/milestones.js';
     import ProjectInformation from '~/components/projects/settings/ProjectInformation.vue';
+    import CategoryForm from '~/components/projects/categories/CategoryForm.vue';    
+    import MilestoneForm from '~/components/projects/milestones/MilestoneForm.vue';    
+
     export default {
         components: {
             ProjectInformation,
+            CategoryForm,
+            MilestoneForm,
         },
         inject: ['setBreadcrumb'],
         props: {
@@ -98,6 +110,7 @@
             };
         },
         computed: {
+            ...mapState('organization', ['organization']),
             links() {
                 const { slug } = this.$route.params;
                 return [
@@ -115,23 +128,121 @@
             this.setBreadcrumb(this.links);
         },
         methods: {
-            async update({ id, ...data }) {
+
+            async saveCategory(data) {
+                const action = data.id ? this.updateCategory(data) : this.createCategory(data);
+
+                await action;
+                console.log(this.$refs)
+                this.$refs.categoryForm.close();
+            },
+
+            editCategory(category) {
+                this.$refs.categoryForm.open(category);
+            },
+            async createCategory(data) {
                 try {
-                    const { data: { data: updatedProject } } = await update(id, data);
-                    this.$store.commit('projects/updateProject', updatedProject);
-                    updatedProject.owner = data.owner;
-                    updatedProject.permission = data.permission;
-                    this.$emit('change', updatedProject);
-                    this.$router.push(`/projects/${updatedProject.slug}/settings`);
-                    this.$message.success({
-                        dangerouslyUseHTMLString: true,
-                        message: '<strong>Success.</strong> Project information was updated.',
-                    });
-                    this.serverErrors = {};
-                } catch (error) {
-                    if (error.response.status === 422) {
-                        this.serverErrors = _mapValues(error.response.data.errors, '0');
-                    } else {
+                    const { slug } = this.$route.params;
+                    const { data: {data: category} } = await storeCategory(slug, data);
+                    this.categories = _concat(category, this.categories);
+                    this.$message.success('Create category success');
+                } catch (e) {
+                    if (e.response.status === 403) {
+                        this.$message.error(e.response.data.message);
+                    } else if(e.response.status === 422){
+                        this.$message.error(e.response.data.message);
+                    }
+                    else{
+                        this.$message.error('Something went wrong, please try again later');
+                    }
+                }
+            },
+
+            async updateCategory(data) {
+                try {
+                    const { slug } = this.$route.params;
+                    const { data : { data: category } } = await updateCategory(slug, data.id, data);
+                    const indexParent = _findIndex(this.categories, ['id', category.id]);
+                    if (indexParent !== -1) {
+                        this.categories.splice(indexParent, 1, category);
+                    }
+                } catch (e) {
+                    if (e.response.status === 403) {
+                        this.$message.error(e.response.data.message);
+                    } else if(e.response.status === 422){
+                        this.$message.error(e.response.data.message);
+                    } else{
+                        this.$message.error('Something went wrong, please try again later');
+                    }               
+                }
+            },
+
+            editMilestone(milestone) {
+                this.$refs.milestoneForm.open(milestone);
+            },
+
+
+            async saveMilestone(data) {
+                console.log(this.$refs.milestoneForm);
+                const action = data.id ? this.updateMilestone(data) : this.createMilestone(data);
+
+                await action;
+                console.log(this.$refs)
+                this.$refs.milestoneForm.close();
+            },
+
+            async createMilestone(data) {
+                try {
+                    const { slug } = this.$route.params;
+                    const { data: {data: milestone} } = await storeMilestone(slug, data);
+                    this.milestones = _concat(milestone, this.milestones);
+                    this.$message.success('Create milestone success');
+                } catch (e) {
+                    if (e.response.status === 403) {
+                        this.$message.error(e.response.data.message);
+                    } else if(e.response.status === 422){
+                        this.$message.error(e.response.data.message);
+                    }
+                    else{
+                        this.$message.error('Something went wrong, please try again later');
+                    }
+                }
+            },
+
+            async updateMilestone(data) {
+                try {
+                    const { slug } = this.$route.params;
+                    const { data : { data: milestone } } = await updateMilestone(slug, data.id, data);
+                    const indexParent = _findIndex(this.milestones, ['id', milestone.id]);
+                    if (indexParent !== -1) {
+                        this.milestones.splice(indexParent, 1, milestone);
+                    }
+                } catch (e) {
+                    if (e.response.status === 403) {
+                        this.$message.error(e.response.data.message);
+                    } else if(e.response.status === 422){
+                        this.$message.error(e.response.data.message);
+                    } else{
+                        this.$message.error('Something went wrong, please try again later');
+                    }               
+                }
+            },
+
+
+            async update(data) {
+                try {
+                    const slug  = this.organization.slug;
+                    console.log(data)
+                    const { data: {data: project} } = await update(slug, data.slug, data);
+                    this.currentProject = project;
+                    this.$message.success('Update project success');
+                } catch (e) {
+                    console.log(e)
+                    if (e.response.status === 403) {
+                        this.$message.error(e.response.data.message);
+                    } else if(e.response.status === 422){
+                        this.$message.error(e.response.data.message);
+                    } else{
                         this.$message.error('Something went wrong, please try again later');
                     }
                 }

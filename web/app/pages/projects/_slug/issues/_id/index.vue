@@ -29,7 +29,7 @@
                     </ElButton>
                 </div>
             </div>
-            <ElCard shadow="never" class="bg-white">
+            <ElCard shadow="never" class="bg-white border-gray-400">
                 <div slot="header" class="flex clearfix">
                     <ElAvatar
                         v-if="issue.owner.avatar_url"
@@ -75,7 +75,7 @@
                                 <div class="flex content-center">
                                     <p
                                         v-for="milestone in issue.milestones"
-                                        class="text-center text-emerald-600 p-1 rounded-sm bg-emerald-50"
+                                        class="text-center mr-2 text-emerald-600 p-1 rounded-sm bg-emerald-50"
                                     >
                                         {{milestone.name}}
                                     </p>
@@ -152,7 +152,7 @@
             <div class="flex mt-5 mb-2 justify-between font-bold text-xl">
                 Comment
             </div>
-            <ElCard class="mb-3">
+            <ElCard shadow="never" class="mb-3 border-gray-400">
                 <ElForm
                     ref="form"
                     :model="form"
@@ -171,7 +171,7 @@
                     </ElButton>
                 </ElForm>
             </ElCard>
-            <ElCard v-for="comment in comments" shadow="never" class="bg-white mb-3" >
+            <ElCard v-for="comment in comments" shadow="never" class="bg-white mb-3 border-gray-400	" >
                 <div class="flex">
                     <ElAvatar
                         v-if="comment.user.avatar_url"
@@ -245,7 +245,7 @@
                 },
                 rules: {
                     content: [
-                        { required: true, message: 'Content is required', trigger: 'blur' },
+                        { required: true, message: 'Content is required', trigger: 'change' },
                     ],
                 },
                 serverErrors: {},
@@ -254,6 +254,8 @@
         created() {
                 this.setBreadcrumb(this.links);
         },
+
+        watchQuery: true,
         methods: {
             name(user) {
                 return user.name ?? user.username;
@@ -298,7 +300,6 @@
                 }  catch (error) {
                     if (error.response.status === 422) {
                         this.serverErrors = _mapValues(error.response.data.errors, '0');
-                        console.log(this.serverErrors);
                     } else {
                         this.$message.error('Something went wrong, please try again later');
                     }

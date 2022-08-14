@@ -20,7 +20,7 @@ export const actions = {
             commit('setConfig', config);
             commit('setMessages', messages);
             commit('auth/setUser', authUser);
-            if(authUser.user) {
+            if(authUser.user && organization) {
                 const {data: {data: project} } = await axios.get(`/organizations/${organization.slug}/projects/${projects[0].slug}`)
                 commit('organization/setOrganization', organization);
                 commit('projects/setProjects', projects);

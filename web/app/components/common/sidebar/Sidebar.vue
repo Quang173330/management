@@ -14,10 +14,27 @@
 </template>
 
 <script>
+    import updateActiveItem from '~/mixins/updateActiveItem';
     export default {
+        mixins: [updateActiveItem],
+
         data: () => ({
             active: '',
         }),
+        
+        watch: {
+            '$route.path': 'updateActive',
+        },
+
+        mounted() {
+            this.updateActiveItem(this.$refs.menu);
+        },
+
+        methods: {
+            updateActive() {
+                this.updateActiveItem(this.$refs.menu);
+            },
+        },
     };
 </script>
 

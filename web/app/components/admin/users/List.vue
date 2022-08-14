@@ -48,9 +48,9 @@
                 </div>
             </template>
         </ElTableColumn>
-        <ElTableColumn label="Username">
+        <ElTableColumn label="Name">
             <template slot-scope="{ row }">
-                <div>{{ row.username }}</div>
+                <div>{{ row.name }}</div>
             </template>
         </ElTableColumn>
         <ElTableColumn label="Provider">

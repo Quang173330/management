@@ -24,9 +24,13 @@
         >
             <ElOption
                 v-for="item in users"
-                :key="item.id" :label="item.name"
-                :value="item.id"
-            />
+                :key="item.user.id"
+                :value="item.user.id"
+                :label="item.user.name"
+                class="items-center	flex"
+                >
+                    <ElAvatar size="small mr-2" :src="item.user.avatar_url"/> {{item.user.name}}
+            </ElOption>
         </ElSelect>
         <ElSelect
             class="mr-5"
@@ -56,6 +60,22 @@
                 :value="item.id"
             />
         </ElSelect>
+
+        <ElSelect
+            class="mr-5"
+            v-model="milestone"
+            size="medium"
+            placeholder="Milestone"
+            clearable
+            filterable
+            @change="filter('milestone')"
+        >
+            <ElOption
+                v-for="item in milestones"
+                :key="item.id" :label="item.name"
+                :value="item.id"
+            />
+        </ElSelect>
     </div>
 </template>
 
@@ -77,11 +97,23 @@
         data() {
             const {
                 type,
-                assign,
                 priority,
+            } = this.$route.query;    
+
+            let {
+                assign,
                 milestone,
-                category
-            } = this.$route.query;            
+                category,
+            } = this.$route.query;
+            if(assign) {
+                assign = parseInt(assign)
+            }
+            if(milestone) {
+                milestone = parseInt(milestone)
+            }
+            if(category) {
+                category = parseInt(category)
+            }        
             return {
                 type,
                 assign,
@@ -96,10 +128,10 @@
         watch: {
             '$route.query': function watchFilter() {
                 this.type = this.$route.query.type ?? null;
-                this.assign = this.$route.query.assign ?? null;
                 this.priority = this.$route.query.priority ?? null;
-                this.milestone = this.$route.query.milestone ?? null;
-                this.category = this.$route.query.category ?? null;
+                this.assign = this.$route.query.assign ? parseInt(this.$route.query.assign) : null
+                this.milestone = this.$route.query.milestone ? parseInt(this.$route.query.milestone) : null
+                this.category = this.$route.query.category ? parseInt(this.$route.query.category) : null
             },
         },
 

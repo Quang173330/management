@@ -11,7 +11,12 @@ class CreateUserPermissionService
         $user = User::where('email', $permissions['email'])->first();
 
         if (!$user) {
-            $user = User::create(['email' => $permissions['email'], 'is_active' => false]);
+            $user = User::create([
+                'email' => $permissions['email'],
+                'name' => $permissions['email'],
+                'username' => $permissions['email'],
+                'is_active' => false
+            ]);
         }
 
         $modelPermission = $model->permissions()->where('user_id', $user->id)->first();

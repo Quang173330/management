@@ -20,6 +20,8 @@ Route::namespace('Auth')->group(function () {
         Route::get('{provider}', 'Login');
         Route::get('{provider}/callback', 'LoginCallback');
     });
+
+    Route::post('/logout', 'Logout')->middleware('auth');
 });
 
 Route::group([
@@ -41,18 +43,40 @@ Route::group([
             Route::get('{project}', 'Show');
             Route::post('', 'Store');
         });
+
+        Route::group([
+            'prefix' => '{organization}/users',
+            'namespace' => 'Users',
+        ], function () {
+            Route::get('', 'Get');
+        });
     });
 
     Route::group([
-        'middleware' => 'can:edit,project',
+        'middleware' => 'can:edit,organization',
     ], function () {
         Route::put('{organization}', 'Update');
+
+        Route::group([
+            'prefix' => '{organization}/projects',
+            'namespace' => 'Projects',
+            'middleware' => 'can:edit,project',
+        ], function () {
+            Route::put('{project}', 'Update');
+        });
     });
 
     Route::group([
-        'middleware' => 'can:manage,project',
+        'middleware' => 'can:manage,organization',
     ], function () {
-        Route::delete('{organization}', 'Delete');
+        Route::group([
+            'prefix' => '{organization}/users',
+            'namespace' => 'Users',
+        ], function () {
+            Route::post('', 'Store');
+            Route::put('{organizationPermission}', 'Update');
+            Route::delete('{organizationPermission}', 'Delete');
+        });
     });
 });
 
@@ -87,6 +111,7 @@ Route::group([
     ], function () {
         Route::post('', 'Store');
         Route::get('', 'Get');
+        Route::put('{milestone}', 'Update');
     });
 
     Route::group([
@@ -94,7 +119,6 @@ Route::group([
         'namespace' => 'Users',
         'middleware' => 'can:view,project',
     ], function () {
-        // Route::post('', 'Store');
         Route::get('', 'Get');
     });
 
@@ -105,6 +129,7 @@ Route::group([
     ], function () {
         Route::post('', 'Store');
         Route::get('', 'Get');
+        Route::put('{category}', 'Update');
     });
 
     Route::group([
@@ -127,11 +152,19 @@ Route::group([
     'namespace' => 'Admin',
 ], function () {
     Route::group([
+        'prefix' => 'organizations',
+        'namespace' => 'Organizations',
+    ], function () {
+        Route::get('', 'Get');
+        Route::put('{organization}', 'Update');
+    });
+
+    Route::group([
         'prefix' => 'projects',
         'namespace' => 'Projects',
     ], function () {
         Route::get('', 'Get');
-        // Route::put('{project}', 'Update');
+        Route::put('{project}', 'Update');
     });
 
     Route::group([
@@ -139,6 +172,6 @@ Route::group([
         'namespace' => 'Users',
     ], function () {
         Route::get('', 'Get');
-        // Route::put('{project}', 'Update');
+        Route::put('{user}', 'Update');
     });
 });

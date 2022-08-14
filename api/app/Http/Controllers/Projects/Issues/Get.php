@@ -24,7 +24,7 @@ class Get extends Controller
         $assign = $request->query('assign');
         $priority = $request->query('priority');
         $category = $request->query('category');
-        // $milestone = $request->query('milestone');
+        $milestone = $request->query('milestone');
 
         $issues = $issuesQuery
         ->title($title)
@@ -33,7 +33,7 @@ class Get extends Controller
         ->assign($assign)
         ->priority($priority)
         ->category($category)
-        // ->milestone($milestone)
+        ->milestone($milestone)
         ->get($project);
 
         $issues->load([

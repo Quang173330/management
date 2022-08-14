@@ -229,7 +229,6 @@
             const { slug } = params;
             const { data: {data: issue} } = await show(slug, id);
             const { data: {data, meta} } = await getComment(slug, id, {...query});
-            console.log(meta)
             return {
                 issue,
                 comments: data,
@@ -245,7 +244,7 @@
                 },
                 rules: {
                     content: [
-                        { required: true, message: 'Content is required', trigger: 'change' },
+                        { required: true, message: 'Content is required', trigger: 'blur' },
                     ],
                 },
                 serverErrors: {},
@@ -279,6 +278,8 @@
                         return 'bg-green-500';
                     case 'open':
                         return 'bg-red-400';
+                    case 'closed':
+                        return 'bg-amber-500';
                 }
             },
             priorityClass(type) {

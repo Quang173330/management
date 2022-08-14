@@ -21,10 +21,13 @@ export const actions = {
             commit('setMessages', messages);
             commit('auth/setUser', authUser);
             if(authUser.user && organization) {
-                const {data: {data: project} } = await axios.get(`/organizations/${organization.slug}/projects/${projects[0].slug}`)
                 commit('organization/setOrganization', organization);
                 commit('projects/setProjects', projects);
-                commit('project/setProject', project);
+                if(projects.length){
+                    const {data: {data: project} } = await axios.get(`/organizations/${organization.slug}/projects/${projects[0].slug}`)
+
+                    commit('project/setProject', project);
+                }
             }
             _forEach(extras, (payload, action) => dispatch(action, payload));
         } catch (error) {

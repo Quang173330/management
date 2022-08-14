@@ -111,7 +111,6 @@
             },
             show(organization) {
                 this.organization = organization;
-                console.log(this.$refs)
                 this.$refs.organization.open();
             },
             edit(organization) {
@@ -120,8 +119,6 @@
             async save(data) {
                 await update(data.slug, data).then(({ data: { data: organization } }) => {
                     const indexParent = _findIndex(this.organizations, ['id', organization.id]);
-                    console.log(organization)
-                    console.log(indexParent)
                     if (indexParent !== -1) {
                         this.organizations.splice(indexParent, 1, organization);
                     }

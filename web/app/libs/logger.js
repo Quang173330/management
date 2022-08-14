@@ -10,7 +10,6 @@ export default class Logger {
 
     print(level, ...args) {
         // eslint-disable-next-line no-console
-        console.log(`[${level.toUpperCase()}]${this.scope ? `[${this.scope}]` : ''}`, ...args);
     }
 
     debug(...args) {

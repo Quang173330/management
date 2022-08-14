@@ -1,14 +1,23 @@
 <template>
-    <div class="w-screen h-screen bg-cover relative bg-red-300">
-        <div class="absolute inline-block inset-0 w-72 h-60 m-auto border rounded text-center bg-opacity-30 bg-white">
-            <button
-                class="box-border relative top-1/2 py-0 px-4 text-left border-0
-leading-8 rounded-sm text-base text-white bg-blue-800 focus:bg-purple-700
-focus:outline-none active:shadow-sm"
-                @click="loginGoogle"
-            >
-                Login with Google
-            </button>
+    <div class="w-screen h-screen flex md:flex-row flex-col">
+        <div class="w-full order-2 md:order-1 flex items-center justify-center">
+            <div class="md:ml-15">
+                <div class="mb-7 text-center md:text-left">
+                    <h3 class="text-emerald-500 text-4xl font-extrabold">
+                        Get's started
+                    </h3>
+                    <span class="text-neutral-400">Only log-in with G-Suite</span>
+                </div>
+                <div class="flex flex-col lg:flex-row gap-4">
+                    <button
+                        class="flex gap-5 items-center justify-center py-2.5 px-4 bg-emerald-500 rounded w-80 md:w-60"
+                        @click="loginGoogle"
+                    >
+                        <Ionicon name="logo-google" class="text-white" size="md" />
+                        <span class="truncate text-white font-bold">Login with Google</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -23,3 +32,9 @@ focus:outline-none active:shadow-sm"
         },
     };
 </script>
+
+<style lang="scss" scoped>
+    .bg {
+        background: url('~assets/images/login.jpg');
+    }
+</style>

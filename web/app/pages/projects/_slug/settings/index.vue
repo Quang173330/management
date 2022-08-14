@@ -133,7 +133,6 @@
                 const action = data.id ? this.updateCategory(data) : this.createCategory(data);
 
                 await action;
-                console.log(this.$refs)
                 this.$refs.categoryForm.close();
             },
 
@@ -183,11 +182,9 @@
 
 
             async saveMilestone(data) {
-                console.log(this.$refs.milestoneForm);
                 const action = data.id ? this.updateMilestone(data) : this.createMilestone(data);
 
                 await action;
-                console.log(this.$refs)
                 this.$refs.milestoneForm.close();
             },
 
@@ -232,12 +229,10 @@
             async update(data) {
                 try {
                     const slug  = this.organization.slug;
-                    console.log(data)
                     const { data: {data: project} } = await update(slug, data.slug, data);
                     this.currentProject = project;
                     this.$message.success('Update project success');
                 } catch (e) {
-                    console.log(e)
                     if (e.response.status === 403) {
                         this.$message.error(e.response.data.message);
                     } else if(e.response.status === 422){

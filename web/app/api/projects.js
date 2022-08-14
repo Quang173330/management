@@ -4,6 +4,8 @@ export const getProjects = (organization, params) => axios.get(`/organizations/$
 
 export const getProject = (organization, project) => axios.get(`/organizations/${organization}/projects/${project}`);
 
+export const getHome = (organization, project) => axios.get(`/organizations/${organization}/projects/${project}/home`);
+
 export const store = (organization, project) => axios.post(`/organizations/${organization}/projects`, project);
 
 export const update = (organization, project, data) => axios.put(`/organizations/${organization}/projects/${project}`, data);
@@ -27,6 +29,6 @@ export const getMonitors = (project, params) => axios.get(`/projects/${project}/
 
 export const removeMonitor = (project, monitor) => axios.delete(`/projects/${project}/monitors/${monitor}`);
 
-export const destroy = (project) => axios.delete(`/projects/${project}`);
+export const destroy = (organization, project) => axios.delete(`/organizations/${organization}/projects/${project}`);
 
 export const getStatusPages = (project) => axios.get(`/projects/${project}/statusPages`);

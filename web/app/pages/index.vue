@@ -14,7 +14,7 @@
                     <ElCard shadow="never" body-style="padding: 0">
                         <div class="flex items-center justify-between h-24">
                             <nuxt-link
-                                :to="`/projects/${project.slug}?sort_by=RECENTLY_UPDATE`"
+                                :to="`/projects/${project.slug}`"
                                 class="flex w-7/12 sm:w-3/5 md:w-1/2 xl:w-3/5 justify-start"
                             >
                                 <div class="hidden w-24 xl:flex justify-center items-center">
@@ -27,7 +27,7 @@
                                 </div>
                                 <div class="flex flex-col p-4 w-full lg:max-w-xs xl:max-w-lg">
                                     <nuxt-link
-                                        :to="`/projects/${project.slug}?sort_by=RECENTLY_UPDATE`"
+                                        :to="`/projects/${project.slug}`"
                                         class="font-bold text-neutral-800 break-words hover:text-blue-700 mb-2 text-base"
                                     >
                                         <p class="truncate">
@@ -69,7 +69,7 @@
 
                                     <ElButton
                                         :disabled="!project.permission.admin"
-                                        @click.prevent="() => $refs.dialog.open()"
+                                        @click.prevent="destroy(project)"
                                     >
                                         <Ionicon
                                             name="trash"
@@ -82,6 +82,18 @@
                     </ElCard>
                 </div>
                 <Pagination :data="paginationProject" />
+                <div v-if="!projects.length">
+                    <ElAlert
+                        class="my-4"
+                        title="You don't have any projects yet!"
+                        type="info"
+                        show-icon
+                        :closable="false"
+                        size="sm"
+                    >
+                        <span>Click create project button to add your projects</span>
+                    </ElAlert>
+                </div>
                 <ProjectForm ref="projectForm" :save="saveProject"/>
             </ElCard>
         </div>
@@ -100,6 +112,7 @@
                         :index-clicked-delete="indexClickedDelete"
                         :owner-id="organization.owner.id"
                         :remove="remove"
+                        :current-permission="organization.permission"
                     />
 
                     <Pagination :data="pagination" />
@@ -122,7 +135,7 @@
     import _findIndex from 'lodash/findIndex';
     import Time from '~/components/common/Time.vue';
     import {
-        store, getProjects, update
+        store, getProjects, update, destroy
     } from '~/api/projects';
     import {
         getOrganizations, getUsers, inviteUser, updatePermissionUser, removeUser, store as storeOrganization, update as updateOrganization
@@ -154,7 +167,6 @@
         async asyncData({ params, query }) {
 
             const {data : {data: organization } } =  await getOrganizations();
-            console.log(organization)
             if(organization) {
                 const { data: {data : projects, meta: paginationProject} } = await getProjects(organization.slug ,  {...query});
                 const { data: { data, meta } } = await getUsers(organization.slug,  {...query});
@@ -187,7 +199,6 @@
         methods: {
             editOrganization(){
                 this.editing = true;
-                console.log('sasa')
             },
             openUserForm() {
                 this.$refs.form.open();
@@ -290,7 +301,6 @@
                 try {
                     const slug  = this.organization.slug;
                     const { data: {data: project} } = await store(slug, data);
-                    console.log(project)
                     this.projects = _concat(project, this.projects);
                     this.$message.success('Create project success');
                 } catch (e) {
@@ -339,7 +349,6 @@
                     if (e.response.status === 403) {
                         this.$message.error(e.response.data.message);
                     } else if(e.response.status === 422){
-                        console.log(e.response);
                         this.$message.error(e.response.data.message);
                     }
                     else{
@@ -357,9 +366,23 @@
                         this.permissions.splice(indexParent, 1, permission);
                     }
                 } catch (e) {
-                    console.log('s')
                     if (e.response.status === 403) {
                         this.$message.error(e.response.data.message);
+                    }
+                }
+            },
+
+            async destroy(project) {
+                try {
+                    await this.$confirm(`Do you want to delete <b>${project.name}</b>?`, 'Delete project', {
+                        dangerouslyUseHTMLString: true,
+                    });
+                    await destroy(this.organization.slug, project.slug);
+                    this.projects = _filter(this.projects, (item) => item.id !== project.id);
+                    this.$message.success('Success remove project');
+                } catch (e) {
+                    if (e !== 'cancel') {
+                        this.$message.error('Something went wrong, please try again later');
                     }
                 }
             },

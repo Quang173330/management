@@ -42,6 +42,7 @@ Route::group([
             Route::get('', 'Get');
             Route::get('{project}', 'Show');
             Route::post('', 'Store');
+            Route::get('{project}/home', 'Home');
         });
 
         Route::group([
@@ -63,6 +64,7 @@ Route::group([
             'middleware' => 'can:edit,project',
         ], function () {
             Route::put('{project}', 'Update');
+            Route::delete('{project}', 'Delete');
         });
     });
 

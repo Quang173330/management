@@ -177,10 +177,6 @@
                 this.form = _cloneDeep(issue)
 
                 this.milestones = milestones;
-                console.log(this.form.milestone)
-                console.log(milestones)
-                console.log(this.form)
-                console.log(typeof this.form.category_id, typeof this.form.milestone)
                 this.users = users;
                 this.categories = categories;
             },

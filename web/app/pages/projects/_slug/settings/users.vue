@@ -1,9 +1,10 @@
 <template>
-    <div class="px-5 min-h-full py-4 bg-white">
+    <div class="px-5 min-h-full py-4 bg-white user-settings">
         <div class="md:flex w-full justify-between">
             <UserFilter class="xs:w-full md:w-1/2" />
 
             <ElButton
+                :disabled="!currentProject.permission.write"
                 type="primary"
                 @click="() => $refs.form.open()"
             >
@@ -24,6 +25,7 @@
                     :loading="loading"
                     :index-clicked-delete="indexClickedDelete"
                     :owner-id="currentProject.owner.id"
+                    :current-permission="currentProject.permission"
                     :remove="remove"
                 />
 
@@ -211,3 +213,10 @@
         },
     };
 </script>
+
+<style>
+    .user-settings{
+        height: 700px;
+    }
+
+</style>

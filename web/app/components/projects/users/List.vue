@@ -8,6 +8,7 @@
                 :index-clicked-delete="indexClickedDelete"
                 :owner-id="ownerId"
                 :remove="remove"
+                :current-permission="currentPermission"
             />
         </li>
     </ul>
@@ -46,6 +47,9 @@
                 type: Function,
                 required: true,
             },
+            currentPermission: {
+                type: Object,
+            }
         },
     };
 </script>

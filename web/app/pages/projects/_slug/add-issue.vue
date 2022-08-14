@@ -200,7 +200,7 @@
                     const { slug } = this.$route.params;
                     this.loading = true;
                     const { data: { data: issue } } = await store(slug, data);
-                    this.$router.push(`/projects/${slug}/issues`);
+                    this.$router.push(`/projects/${slug}/issues/${issue.id}`);
                     this.$message.success('Create issue success');    
                 } catch (e) {
                     if(e.response.status === 422) {

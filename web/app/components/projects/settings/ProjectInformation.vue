@@ -5,6 +5,7 @@
         </span>
         <div>
             <ElForm
+                :disabled="!currentProject.permission.write"
                 ref="form"
                 :model="form"
                 :rules="rules"
@@ -32,10 +33,11 @@
                 </ElFormItem>
             </ElForm>
             <div class="flex justify-between lg:justify-end">
-                <ElButton class="px-8" type="primary" @click="onCancel">
+                <ElButton :disabled="!currentProject.permission.write" class="px-8" type="primary" @click="onCancel">
                     Cancel
                 </ElButton>
                 <ElButton
+                    :disabled="!currentProject.permission.write"
                     class="px-8"
                     :loading="processing"
                     type="primary"

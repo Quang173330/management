@@ -136,6 +136,8 @@
                         return 'bg-green-500';
                     case 'open':
                         return 'bg-red-400';
+                    case 'closed':
+                        return 'bg-amber-500';
                 }
             },
             priorityClass(type) {
@@ -215,14 +217,11 @@
 
                 }
                 if(e.removed) {
-                    console.log(e.removed)
                     this.oldIndex = e.removed.oldIndex;
-                    console.log(this.oldIndex);
                 }
             },
 
             async addClosed(e) {
-                console.log(this.oldIndex);
                 if (e.added) {
                     const data = e.added.element;
                     const index = e.added.newIndex;
@@ -248,7 +247,6 @@
 
             async loadOpen() {
                 if(this.openPagination.current_page < this.openPagination.last_page) {
-                    console.log('sda')
                     this.openPagination.current_page = this.openPagination.current_page + 1;
                     const {data: { data: newIssues } } = await get(this.slug, {status: 'open', page: this.openPagination.current_page, ...this.$route.query});
                     this.openIssues = _concat(this.openIssues, newIssues);
@@ -258,7 +256,6 @@
 
             async loadInProgress() {
                 if(this.inProgressPagination.current_page < this.inProgressPagination.last_page) {
-                    console.log('sda')
                     this.inProgressPagination.current_page = this.inProgressPagination.current_page + 1;
                     const {data: { data: newIssues } } = await get(this.slug, {status: 'in progress', page: this.inProgressPagination.current_page, ...this.$route.query});
                     this.inProgressIssues = _concat(this.inProgressIssues, newIssues);
@@ -267,7 +264,6 @@
             },
             async loadResolved() {
                 if(this.resolvedPagination.current_page < this.resolvedPagination.last_page) {
-                    console.log('sda')
                     this.resolvedPagination.current_page = this.resolvedPagination.current_page + 1;
                     const {data: { data: newIssues } } = await get(this.slug, {status: 'resolved', page: this.resolvedPagination.current_page, ...this.$route.query});
                     this.resolvedIssues = _concat(this.resolvedIssues, newIssues);
@@ -276,7 +272,6 @@
             },
             async loadClosed() {
                 if(this.closedPagination.current_page < this.closedPagination.last_page) {
-                    console.log('sda')
                     this.closedPagination.current_page = this.closedPagination.current_page + 1;
                     const {data: { data: newIssues } } = await get(this.slug, {status: 'closed', page: this.closedPagination.current_page, ...this.$route.query});
                     this.closedIssues = _concat(this.closedIssues, newIssues);

@@ -106,10 +106,8 @@
         },
         methods: {
             onCancel() {
-                console.log('dss');
                 this.editing = false;
 
-                console.log(this.editing)
             },
             async saveOrganization(data) {
                 this.processing = true;

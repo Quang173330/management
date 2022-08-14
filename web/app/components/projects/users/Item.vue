@@ -79,12 +79,14 @@
                 items-center border-l border-background-light-gray"
             >
                 <ElButton
+                    :disabled="!currentPermission.write"
                     type="primary"
                     @click.stop.prevent="edit(permission)"
                 >
                     Edit
                 </ElButton>
                 <ElButton
+                    :disabled="!currentPermission.write"
                     type="danger"
                     @click.stop.prevent="remove(permission)"
                 >
@@ -122,6 +124,9 @@
                 type: Function,
                 required: true,
             },
+            currentPermission: {
+                type: Object
+            }
         },
 
         methods: {

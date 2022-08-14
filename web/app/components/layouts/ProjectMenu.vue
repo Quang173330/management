@@ -9,11 +9,6 @@
                     {{ project.name }}
                 </ElButton>
             </ElDropdownItem>
-            <ElDropdownItem>
-                <ElButton @click="changeProject(project.slug)" type="text">
-                    Create Project
-                </ElButton>
-            </ElDropdownItem>
         </ElDropdownMenu>
     </ElDropdown>
 </template>
@@ -39,7 +34,6 @@
                 const {data: {data: project} } = await getProject(this.organization.slug, slug); 
                 this.$store.commit('project/setProject', project);
                 this.$router.push(`/projects/${project.slug}`);
-                console.log(project)
             }
         }
     };

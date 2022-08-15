@@ -114,6 +114,7 @@ Route::group([
         Route::post('', 'Store');
         Route::get('', 'Get');
         Route::put('{milestone}', 'Update');
+        Route::delete('{milestone}', 'Delete');
     });
 
     Route::group([
@@ -132,6 +133,7 @@ Route::group([
         Route::post('', 'Store');
         Route::get('', 'Get');
         Route::put('{category}', 'Update');
+        Route::delete('{category}', 'Delete');
     });
 
     Route::group([

@@ -25,10 +25,6 @@ export const removeUser = (project, permission) => axios.delete(`/projects/${pro
 export const updatePermissionUser = (id, project, params) => axios.put(`/projects/${project}/users/${id}`, params);
 
 
-export const getMonitors = (project, params) => axios.get(`/projects/${project}/monitors`, { params });
-
-export const removeMonitor = (project, monitor) => axios.delete(`/projects/${project}/monitors/${monitor}`);
-
 export const destroy = (organization, project) => axios.delete(`/organizations/${organization}/projects/${project}`);
 
-export const getStatusPages = (project) => axios.get(`/projects/${project}/statusPages`);
+export const destroyCategory = (project, category) => axios.delete(`projects/${project}/categories/${category}`);

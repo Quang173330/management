@@ -24,9 +24,10 @@
                         <span class="font-medium truncate">{{ row.created_at | formatDate }}</span>
                     </template>
                 </ElTableColumn>
-                <ElTableColumn label="Action" width="100">
+                <ElTableColumn label="Action" width="200">
                     <template slot-scope="{ row }">
                         <ElButton size="mini" @click.prevent="editCategory(row)">Edit</ElButton>
+                        <ElButton size="mini" @click.prevent="destroyCategory(row)">Delete</ElButton>
                     </template>
                 </ElTableColumn>
             </ElTable>
@@ -54,9 +55,10 @@
                         <span class="font-medium truncate">{{ row.created_at | formatDate }}</span>
                     </template>
                 </ElTableColumn>
-                <ElTableColumn label="Action" width="100">
+                <ElTableColumn label="Action" width="200">
                     <template slot-scope="{ row }">
                         <ElButton size="mini" @click.prevent="editMilestone(row)">Edit</ElButton>
+                        <ElButton size="mini" @click.prevent="destroyMilestone(row)">Delete</ElButton>
                     </template>
                 </ElTableColumn>
             </ElTable>
@@ -69,14 +71,16 @@
     import _mapValues from 'lodash/mapValues';
     import _concat from 'lodash/concat';
     import _findIndex from 'lodash/findIndex';
+    import _filter from 'lodash/filter';
     import { mapState } from 'vuex';
     import {
         update,
         getCategories,
         storeCategory,
         updateCategory,
+        destroyCategory
     } from '~/api/projects';
-    import { get, store as storeMilestone, update as updateMilestone } from '~/api/milestones.js';
+    import { get, store as storeMilestone, update as updateMilestone, destroy as destroyMilestone } from '~/api/milestones.js';
     import ProjectInformation from '~/components/projects/settings/ProjectInformation.vue';
     import CategoryForm from '~/components/projects/categories/CategoryForm.vue';    
     import MilestoneForm from '~/components/projects/milestones/MilestoneForm.vue';    
@@ -165,6 +169,7 @@
                     if (indexParent !== -1) {
                         this.categories.splice(indexParent, 1, category);
                     }
+                    this.$message.success('Update category success');
                 } catch (e) {
                     if (e.response.status === 403) {
                         this.$message.error(e.response.data.message);
@@ -214,6 +219,7 @@
                     if (indexParent !== -1) {
                         this.milestones.splice(indexParent, 1, milestone);
                     }
+                     this.$message.success('Update milestone success');
                 } catch (e) {
                     if (e.response.status === 403) {
                         this.$message.error(e.response.data.message);
@@ -238,6 +244,38 @@
                     } else if(e.response.status === 422){
                         this.$message.error(e.response.data.message);
                     } else{
+                        this.$message.error('Something went wrong, please try again later');
+                    }
+                }
+            },
+
+            async destroyCategory(category) {
+                try {
+                    await this.$confirm(`Do you want to delete <b>${category.name}</b>?`, 'Delete category', {
+                        dangerouslyUseHTMLString: true,
+                    });
+                    await destroyCategory(this.currentProject.slug, category.id);
+                    this.categories = _filter(this.categories, (item) => item.id !== category.id);
+                    this.$message.success('Success remove category');
+                } catch (e) {
+                    console.log(e)
+                    if (e !== 'cancel') {
+                        this.$message.error('Something went wrong, please try again later');
+                    }
+                }
+            },
+
+            async destroyMilestone(milestone) {
+                try {
+                    await this.$confirm(`Do you want to delete <b>${milestone.name}</b>?`, 'Delete milestone', {
+                        dangerouslyUseHTMLString: true,
+                    });
+                    await destroyMilestone(this.currentProject.slug, milestone.id);
+                    this.milestones = _filter(this.milestones, (item) => item.id !== milestone.id);
+                    this.$message.success('Success remove milestone');
+                } catch (e) {
+                    console.log(e)
+                    if (e !== 'cancel') {
                         this.$message.error('Something went wrong, please try again later');
                     }
                 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Projects\Categories;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -18,7 +17,7 @@ class Delete extends Controller
      */
     public function __invoke(Project $project, Request $request, Category $category)
     {
-        $count = $category->issues()->count();
+        $count = $category->issues->count();
         if(!$count) {
             $category->delete();
 

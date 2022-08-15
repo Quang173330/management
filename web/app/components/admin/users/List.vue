@@ -58,18 +58,6 @@
                 <div>{{ row.provider }}</div>
             </template>
         </ElTableColumn>
-        <ElTableColumn label="Status">
-            <template slot-scope="{ row }">
-                <ElSwitch
-                    v-tooltip
-                    :value="row.is_active"
-                    :title="switchTooltip(row.is_active)"
-                    active-color="#13ce66"
-                    @change="changeActive(row)"
-                />
-                <i v-if="row.loading" class="el-icon-loading text-gray-600 ml-2" />
-            </template>
-        </ElTableColumn>
         <ElTableColumn width="150px">
             <template slot-scope="{ row }">
                 <ElButton icon="el-icon-edit" size="mini" @click="edit(row)" />

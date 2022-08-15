@@ -10,13 +10,6 @@
                 <ElInput v-model="form.name" name="name" />
             </ElFormItem>
 
-            <ElFormItem label="Status" prop="is_active" :error="serverErrors.is_active">
-                <ElSwitch
-                    v-model="form.is_active"
-                    active-color="#13ce66"
-                />
-            </ElFormItem>
-
             <ElFormItem
                 v-if="form.id !== user.id"
                 label="Role"

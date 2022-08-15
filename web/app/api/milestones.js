@@ -5,3 +5,5 @@ export const get = (project) => axios.get(`/projects/${project}/milestones`);
 export const store = (project, milestone) => axios.post(`/projects/${project}/milestones`, milestone);
 
 export const update = (project, milestone, data) => axios.put(`projects/${project}/milestones/${milestone}`, data);
+
+export const destroy = (project, milestone) => axios.delete(`projects/${project}/milestones/${milestone}`);

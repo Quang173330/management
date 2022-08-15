@@ -18,7 +18,7 @@ class Delete extends Controller
      */
     public function __invoke(Project $project, Request $request, Milestone $milestone)
     {
-        $count = $milestone->issues()->count();
+        $count = $milestone->issues->count();
         if(!$count) {
             $milestone->delete();
 

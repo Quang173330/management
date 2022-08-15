@@ -32,9 +32,3 @@
         },
     };
 </script>
-
-<style lang="scss" scoped>
-    .bg {
-        background: url('~assets/images/login.jpg');
-    }
-</style>
